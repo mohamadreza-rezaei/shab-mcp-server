@@ -1,0 +1,14 @@
+{
+  "regions": [
+    {
+      "id": "Ty",
+      "name": "رامسر",
+      "type": "city",
+      "type_label": "شهر",
+      "province": {"id": "w", "name": "مازندران"},
+      "houses_count": 500
+    }
+  ],
+  "houses": [],
+  "near_regions": []
+}

@@ -1,0 +1,20 @@
+{
+  "pagination": {"total": 1, "current_page": 1},
+  "records": [
+    {
+      "id": 35729,
+      "title": "ویلا تستی رامسر",
+      "type": "villa",
+      "pricing": {
+        "price_after_discount": {"amount": 2000000, "currency_name": "تومان"}
+      },
+      "rates": {"rank": 4.7},
+      "reviews": 32,
+      "location": {"city": "رامسر", "province": "مازندران", "village": "رمک"},
+      "max_accommodates": 4,
+      "rooms": 1,
+      "badges": ["is_instant"],
+      "cover_photo": {"thumbnail_absolute_url": "https://example.com/thumb.jpg"}
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "is_instant": true,
+  "is_expensive": false,
+  "finalized_price": {
+    "without_discount_code": {"amount": 7500000, "currencyName": "تومان"},
+    "with_discount_code": {"amount": 7500000, "currencyName": "تومان"},
+    "prepayment": {"amount": 7500000, "currencyName": "تومان"}
+  },
+  "details_of_price": {
+    "base": {"amount": 7500000, "currencyName": "تومان"},
+    "extra_person": {"amount": {"amount": 0, "currencyName": "تومان"}, "count": 0}
+  }
+}
