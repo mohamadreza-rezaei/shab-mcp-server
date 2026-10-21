@@ -286,7 +286,7 @@ uvx jabama-mcp
 می‌توانیم مثلاً:
 
 ```text
-jabama-mcp.looply.one
+jabama-mcp.shab.systems
 ```
 
 یا حتی یک MCP server داخل AI Lab Pro داشته باشیم:
@@ -784,7 +784,7 @@ Marco Polo
      │
      │ MCP
      ▼
-https://litellm.looply.one/mcp
+https://litellm.shab.systems/mcp
      │
      ├── shab
      ├── ...

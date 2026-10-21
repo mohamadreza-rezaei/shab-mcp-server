@@ -1,0 +1,71 @@
+# Shab MCP docs
+
+Private, read-only MCP for [Shab](https://shab.ir) accommodation APIs. Agents talk to **LiteLLM**, LiteLLM talks to **shab-mcp** (Docker), shab-mcp talks to **api.shab.ir**.
+
+```
+Cursor / Claude / OpenClaw / OpenWebUI / …
+              │  HTTPS + virtual key
+              ▼
+     LiteLLM MCP gateway
+     /shab_mcp/mcp
+              │  Docker DNS (internal)
+              ▼
+         shab-mcp:8000
+              │
+              ▼
+         api.shab.ir
+```
+
+## Guides
+
+| Doc | When to use |
+|-----|-------------|
+| [SETUP.md](./SETUP.md) | Clone on server, Lab Pro compose, LiteLLM config, health checks, pytest |
+| [CLIENTS.md](./CLIENTS.md) | Add Shab MCP to Cursor, Claude Code, OpenClaw, VS Code Copilot, Hermes |
+| [ساخت MCP سفارشی.md](./ساخت%20MCP%20سفارشی.md) | Design notes / architecture (Persian) |
+
+## Quick cheatsheet
+
+**Server layout (sibling repos):**
+
+```text
+/home/mrezaei/
+├── ai-lab/              # Lab Pro (LiteLLM + compose)
+└── shab-mcp-server/     # this repo (Docker build context)
+```
+
+**Do not** copy `.env.example` or `uv sync` on the server for Docker deploy. Compose builds the image; Lab Pro `.env` supplies `SHAB_*`.
+
+**Endpoints:**
+
+| What | URL |
+|------|-----|
+| Container health | `http://shab-mcp:8000/health` (internal) |
+| Container MCP | `http://shab-mcp:8000/mcp` (internal) |
+| Public via LiteLLM | `https://litellm.shab.systems/shab_mcp/mcp` |
+| All MCPs via LiteLLM | `https://litellm.shab.systems/mcp` |
+
+**Auth (clients → LiteLLM):**
+
+```http
+x-litellm-api-key: Bearer sk-<virtual-key>
+```
+
+**Tools:** `search_destinations` · `search_accommodations` · `get_accommodation` · `check_availability`
+
+**Dates:** Gregorian `YYYY-MM-DD` in · Jalali / unix day out to Shab API · prices in **Toman**.
+
+## One-liner verify
+
+```bash
+export LITELLM_URL=https://litellm.shab.systems
+export LITELLM_API_KEY=sk-<your-virtual-key>
+
+curl -sS "$LITELLM_URL/shab_mcp/mcp" \
+  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+You should see the four Shab tools. Full steps → [SETUP.md](./SETUP.md).

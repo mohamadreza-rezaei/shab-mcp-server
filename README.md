@@ -4,6 +4,14 @@ Private, read-only [Model Context Protocol](https://modelcontextprotocol.io/) se
 
 Designed to run inside **AI Lab Pro** and be consumed through **LiteLLM’s MCP gateway**.
 
+## Documentation
+
+| Doc | Contents |
+|-----|----------|
+| [docs/README.md](docs/README.md) | Short cheatsheet (URLs, auth, layout) |
+| [docs/SETUP.md](docs/SETUP.md) | Server deploy, Lab Pro compose, LiteLLM MCP, testing |
+| [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor, Claude Code, OpenClaw, Copilot, Hermes, OpenWebUI |
+
 ## Tools (v0.1)
 
 | Tool | Purpose |
