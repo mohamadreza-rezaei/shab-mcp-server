@@ -163,7 +163,7 @@ mcp_servers:
     url: http://shab-mcp:8000/mcp
     transport: http
     auth_type: none
-    available_on_public_internet: false
+    available_on_public_internet: true
     allowed_tools:
       - search_destinations
       - search_accommodations
@@ -173,9 +173,10 @@ mcp_servers:
 
 Notes:
 
-- `url` uses **Docker DNS** name `shab-mcp`, not `localhost`.
+- `url` uses **Docker DNS** name `shab-mcp`, not `localhost`. The container stays internal; only LiteLLM is public.
+- `available_on_public_internet: true` — external clients can use Shab MCP through the gateway. Auth is still required: virtual key with grant for `shab_mcp`.
 - `auth_type: none` — Shab MCP has no upstream API key; LiteLLM authenticates **clients**.
-- `mcp_internal_ip_ranges` must allow the Lab Pro Docker subnet or LiteLLM may refuse internal MCP URLs.
+- `mcp_internal_ip_ranges` must allow the Lab Pro Docker subnet so LiteLLM can reach the upstream container.
 - After editing `config.yaml`, **restart LiteLLM** so it reloads.
 
 ```bash

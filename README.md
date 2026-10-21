@@ -60,11 +60,11 @@ mcp_servers:
     url: http://shab-mcp:8000/mcp
     transport: http
     auth_type: none
-    available_on_public_internet: false
+    available_on_public_internet: true
 ```
 
 3. From LabPro: `make up` (or recreate `shab-mcp` + restart `litellm` so it reloads `config.yaml`).
-4. Call tools via LiteLLM: `http://127.0.0.1:4000/shab_mcp/mcp` with a LiteLLM virtual/master key.
+4. Call tools via LiteLLM: `https://litellm.shab.systems/shab_mcp/mcp` with a virtual key that grants `shab_mcp`.
 
 Local host testing without Docker: run `SHAB_MCP_PORT=8765 uv run shab-mcp`, then register that URL in LiteLLM Admin → MCP Servers (use the Docker-bridge host IP, e.g. `http://10.55.0.1:8765/mcp`).
 
