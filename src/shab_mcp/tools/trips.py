@@ -33,16 +33,28 @@ def _extract_list(data: Any) -> list[dict[str, Any]]:
     return []
 
 
-async def list_trips_impl(*, access_token: str, page: int = 1) -> dict[str, Any]:
+async def list_trips_impl(
+    *,
+    access_token: str,
+    page: int = 1,
+    source: str = "guest",
+) -> dict[str, Any]:
     token = require_access_token(access_token)
     if page < 1:
         raise ShabValidationError("page must be >= 1.")
 
     async with ShabAPIClient() as api:
-        try:
-            data = await api.list_trips(token, page=page)
-        except Exception:
-            data = await api.list_reserves(token, page=page)
+        # Mainweb guest trips: GET /reserve?type=guest&new=1
+        if source == "trips":
+            try:
+                data = await api.list_trips(token, page=page)
+            except Exception:
+                data = await api.list_reserves(token, page=page, reserve_type="guest")
+        else:
+            try:
+                data = await api.list_reserves(token, page=page, reserve_type="guest")
+            except Exception:
+                data = await api.list_trips(token, page=page)
 
     trips = [normalize_booking_summary(r) for r in _extract_list(data)]
     pagination = data.get("pagination") if isinstance(data, dict) else {}

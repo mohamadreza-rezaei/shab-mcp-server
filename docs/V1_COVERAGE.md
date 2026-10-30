@@ -26,17 +26,17 @@ Legend: **done** | **planned** | **skip** (intentional)
 |----------|---------|--------|
 | `auth/login-otp`, `verify-otp`, `logout`, `GET user` | OTP tools + `get_auth_status` | done |
 | `POST reserve`, `invoice/calculate`, payment handoff | `create_booking`, `calculate_invoice`, `get_payment_link` | done |
-| `GET reserve` / trips | `list_trips`, `get_booking`, `get_booking_host` | done (parity 0.4) |
+| `GET reserve` / trips | `list_trips` (guest+new=1), `get_booking`, `get_booking_host` | done |
 | `GET profile/{user}` | `get_host_profile` | done |
 
 ## Guest lifecycle (v0.4)
 
 | Upstream | Tool(s) | Status |
 |----------|---------|--------|
-| cancel reasons/penalty/cancel | cancel tools | planned 0.4 |
-| chat list/thread/send/seen | chat tools | planned 0.4 |
-| review store/photo/comment | review tools | planned 0.4 |
-| eligible-transitions / change-status / reject | `change_booking_status` | planned 0.4 |
+| cancel reasons/penalty/cancel | `list_cancellation_reasons`, `get_cancellation_penalty`, `cancel_booking` | done |
+| chat list/thread/send/seen | `list_chats`, `get_chat_thread`, `send_chat_message`, `mark_chat_seen` | done |
+| review store/comment | `get_review_for_reservation`, `submit_review`, `comment_on_review`, `list_my_reviews` | done |
+| eligible-transitions / change-status | `get_eligible_transitions`, `change_booking_status` | done |
 
 ## Guest profile (v0.5)
 

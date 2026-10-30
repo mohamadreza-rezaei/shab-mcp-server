@@ -42,6 +42,21 @@ from shab_mcp.tools.trips import (
     get_host_profile_safe,
     list_trips_safe,
 )
+from shab_mcp.tools.lifecycle import (
+    cancel_booking_safe,
+    change_booking_status_safe,
+    comment_on_review_safe,
+    get_cancellation_penalty_safe,
+    get_chat_thread_safe,
+    get_eligible_transitions_safe,
+    get_review_for_reservation_safe,
+    list_cancellation_reasons_safe,
+    list_chats_safe,
+    list_my_reviews_safe,
+    mark_chat_seen_safe,
+    send_chat_message_safe,
+    submit_review_safe,
+)
 
 INSTRUCTIONS = """\
 Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
@@ -68,6 +83,7 @@ Rules:
 - Dates are Gregorian YYYY-MM-DD. The server converts to Shab Jalali / unix timestamps.
 - Prices are Toman.
 - Prefer Persian place names (e.g. رامسر, تهران).
+Guest lifecycle: cancel_booking, chat REST, submit_review, change_booking_status (confirm=true).
 - Never invent an access_token; never complete bank/IPG card payment inside tools.
 """
 
@@ -454,6 +470,174 @@ def main() -> None:
         mcp.run(transport="stdio")
     else:
         mcp.run(transport="http", host=settings.shab_mcp_host, port=settings.shab_mcp_port)
+
+
+
+
+@mcp.tool
+async def list_cancellation_reasons(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation tiny id.")],
+) -> dict[str, Any]:
+    """List cancellation reasons for a booking."""
+    return await list_cancellation_reasons_safe(access_token=access_token, reserve_id=reserve_id)
+
+
+@mcp.tool
+async def get_cancellation_penalty(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation tiny id.")],
+    reason_id: Annotated[int, Field(description="Cancellation reason id.", ge=1)],
+) -> dict[str, Any]:
+    """Preview cancellation penalty before cancel_booking."""
+    return await get_cancellation_penalty_safe(
+        access_token=access_token, reserve_id=reserve_id, reason_id=reason_id
+    )
+
+
+@mcp.tool
+async def cancel_booking(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation tiny id.")],
+    reason_id: Annotated[int, Field(description="Cancellation reason id.", ge=1)],
+    description: Annotated[str | None, Field(description="Optional guest note.")] = None,
+    confirm: Annotated[bool, Field(description="Must be true after penalty preview.")] = False,
+) -> dict[str, Any]:
+    """Cancel a booking. Requires confirm=true."""
+    return await cancel_booking_safe(
+        access_token=access_token,
+        reserve_id=reserve_id,
+        reason_id=reason_id,
+        description=description,
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def get_eligible_transitions(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+) -> dict[str, Any]:
+    """List eligible status transitions for a reservation."""
+    return await get_eligible_transitions_safe(access_token=access_token, reserve_id=reserve_id)
+
+
+@mcp.tool
+async def change_booking_status(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+    transition: Annotated[
+        str,
+        Field(description="Transition code, e.g. ABH (accept), RBH (reject by host), RBG."),
+    ],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Apply a reservation status transition. Requires confirm=true."""
+    return await change_booking_status_safe(
+        access_token=access_token,
+        reserve_id=reserve_id,
+        transition=transition,
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def list_chats(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page (1-based).", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List chat conversations (REST)."""
+    return await list_chats_safe(access_token=access_token, page=page)
+
+
+@mcp.tool
+async def get_chat_thread(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id for the chat thread.")],
+    page: Annotated[int, Field(description="Messages page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Fetch chat messages for a reservation (poll; no Pusher)."""
+    return await get_chat_thread_safe(
+        access_token=access_token, reserve_id=reserve_id, page=page
+    )
+
+
+@mcp.tool
+async def send_chat_message(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+    text: Annotated[str, Field(description="Message text.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Send a TEXT chat message. Requires confirm=true."""
+    return await send_chat_message_safe(
+        access_token=access_token, reserve_id=reserve_id, text=text, confirm=confirm
+    )
+
+
+@mcp.tool
+async def mark_chat_seen(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+    message_id: Annotated[str, Field(description="Message id to mark seen.")],
+) -> dict[str, Any]:
+    """Mark a chat message as seen."""
+    return await mark_chat_seen_safe(
+        access_token=access_token, reserve_id=reserve_id, message_id=message_id
+    )
+
+
+@mcp.tool
+async def get_review_for_reservation(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+) -> dict[str, Any]:
+    """Get review form/detail for a reservation."""
+    return await get_review_for_reservation_safe(
+        access_token=access_token, reserve_id=reserve_id
+    )
+
+
+@mcp.tool
+async def submit_review(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+    rating: Annotated[int | None, Field(description="Optional overall rating 1-5.", ge=1, le=5)] = None,
+    comment: Annotated[str | None, Field(description="Optional review text.")] = None,
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Submit a guest review for a stay. Requires confirm=true."""
+    return await submit_review_safe(
+        access_token=access_token,
+        reserve_id=reserve_id,
+        rating=rating,
+        comment=comment,
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def comment_on_review(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    review_id: Annotated[int, Field(description="Review id to comment on.", ge=1)],
+    comment: Annotated[str, Field(description="Comment text.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Reply/comment on a review. Requires confirm=true."""
+    return await comment_on_review_safe(
+        access_token=access_token,
+        payload={"review_id": review_id, "comment": comment},
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def list_my_reviews(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page (1-based).", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List reviews written by the current user."""
+    return await list_my_reviews_safe(access_token=access_token, page=page)
 
 
 if __name__ == "__main__":

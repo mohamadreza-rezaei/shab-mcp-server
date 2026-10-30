@@ -339,14 +339,6 @@ class ShabAPIClient:
             access_token=access_token,
         )
 
-    async def list_reserves(self, access_token: str, *, page: int = 1) -> Any:
-        return await self._request(
-            "GET",
-            "reserve",
-            params={"page": page, "new": "true"},
-            access_token=access_token,
-        )
-
     async def list_trips(self, access_token: str, *, page: int = 1) -> Any:
         return await self._request(
             "GET",
@@ -360,3 +352,157 @@ class ShabAPIClient:
 
     async def get_reserve_host(self, access_token: str, reserve_id: str) -> Any:
         return await self._request("GET", f"reserve/{reserve_id}/host", access_token=access_token)
+
+    async def list_reserves(
+        self,
+        access_token: str,
+        *,
+        page: int = 1,
+        reserve_type: str | None = "guest",
+        new: bool = True,
+    ) -> Any:
+        params: dict[str, Any] = {"page": page}
+        if new:
+            params["new"] = "1"
+        if reserve_type:
+            params["type"] = reserve_type
+        return await self._request(
+            "GET",
+            "reserve",
+            params=params,
+            access_token=access_token,
+        )
+
+    async def get_cancellation_reasons(self, access_token: str, tiny_id: str) -> Any:
+        return await self._request(
+            "GET", f"reserve/{tiny_id}/cancellation-reasons", access_token=access_token
+        )
+
+    async def get_cancellation_penalty(
+        self, access_token: str, tiny_id: str, *, reason_id: int
+    ) -> Any:
+        return await self._request(
+            "GET",
+            f"reserve/{tiny_id}/cancellation-penalty",
+            params={"reason_id": reason_id},
+            access_token=access_token,
+        )
+
+    async def cancel_reserve(
+        self,
+        access_token: str,
+        tiny_id: str,
+        *,
+        reason_id: int,
+        description: str | None = None,
+    ) -> Any:
+        body: dict[str, Any] = {"reason_id": reason_id}
+        if description:
+            body["description"] = description
+        return await self._request(
+            "POST", f"reserve/{tiny_id}/cancel", json=body, access_token=access_token
+        )
+
+    async def get_eligible_transitions(self, access_token: str, reserve_id: str) -> Any:
+        return await self._request(
+            "GET",
+            f"reserve/{reserve_id}/eligible-transitions",
+            access_token=access_token,
+        )
+
+    async def change_reserve_status(
+        self,
+        access_token: str,
+        reserve_id: str,
+        *,
+        transition: str,
+        extra: dict[str, Any] | None = None,
+    ) -> Any:
+        params: dict[str, Any] = {"transition": transition}
+        return await self._request(
+            "POST",
+            f"reserve/{reserve_id}/change-status",
+            params=params,
+            json=extra or {},
+            access_token=access_token,
+        )
+
+    async def reject_reserve_guest(
+        self, access_token: str, *, body: dict[str, Any]
+    ) -> Any:
+        return await self._request(
+            "POST", "reserve/reject", json=body, access_token=access_token
+        )
+
+    async def list_chats(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET", "chat", params={"page": page}, access_token=access_token
+        )
+
+    async def get_reserve_chat(
+        self, access_token: str, reserve_id: str, *, page: int = 1
+    ) -> Any:
+        return await self._request(
+            "GET",
+            f"reserve/{reserve_id}/chat",
+            params={"page": page},
+            access_token=access_token,
+        )
+
+    async def send_chat_message(
+        self,
+        access_token: str,
+        *,
+        reserve_id: str,
+        text: str,
+        msg_type: str = "TEXT",
+    ) -> Any:
+        return await self._request(
+            "POST",
+            "chat",
+            json={
+                "reserve_id": reserve_id,
+                "text": text,
+                "type": msg_type,
+                "is_sent_by_me": True,
+            },
+            access_token=access_token,
+        )
+
+    async def mark_chat_seen(
+        self, access_token: str, reserve_id: str, message_id: str
+    ) -> Any:
+        return await self._request(
+            "POST",
+            f"chat/reserve/{reserve_id}/message/{message_id}/seen",
+            access_token=access_token,
+        )
+
+    async def get_review_reservation(self, access_token: str, reserve_id: str) -> Any:
+        return await self._request(
+            "GET",
+            f"user/review/reservation/{reserve_id}",
+            access_token=access_token,
+        )
+
+    async def store_review(
+        self, access_token: str, *, payload: dict[str, Any]
+    ) -> Any:
+        return await self._request(
+            "POST", "user/review/store", json=payload, access_token=access_token
+        )
+
+    async def store_review_comment(
+        self, access_token: str, *, payload: dict[str, Any]
+    ) -> Any:
+        return await self._request(
+            "POST", "user/review/comment", json=payload, access_token=access_token
+        )
+
+    async def list_my_reviews(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "user/review/my",
+            params={"page": page},
+            access_token=access_token,
+        )
