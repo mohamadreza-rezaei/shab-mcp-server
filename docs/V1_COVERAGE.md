@@ -10,15 +10,15 @@ Legend: **done** | **planned** | **skip** (intentional)
 |----------|---------|--------|
 | `GET house/suggestions`, `region/suggestions` | `search_destinations` | done |
 | `GET search/filters` | `list_search_filters` | done |
-| `GET house/search` | `search_accommodations` | done (bbox/nearby in 0.3) |
+| `GET house/search` | `search_accommodations` | done (incl. bbox/nearby) |
 | `GET house/{id}` | `get_accommodation` | done |
 | `GET house/{id}/photos` | `get_accommodation_photos` | done |
 | `GET house/{id}/reviews` | `get_accommodation_reviews` | done |
 | `GET house/{id}/calendar`, `reserve/proforma` | `check_availability` | done |
-| `GET house/neighbourhoods` | `list_neighbourhoods` | planned 0.3 |
-| `GET house/{id}/similar` | `get_similar_accommodations` | planned 0.3 |
-| `GET house/count` | `count_accommodations` | planned 0.3 |
-| `GET landing/tehran` | `get_landing_tehran` | planned 0.3 |
+| `GET house/neighbourhoods` | `list_neighbourhoods` | done |
+| `GET house/{id}/similar` | `get_similar_accommodations` | done |
+| `GET house/count` | `count_accommodations` | done |
+| `GET landing/tehran` | `get_landing_tehran` | done |
 
 ## Guest auth / booking (v0.2)
 

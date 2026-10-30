@@ -249,6 +249,21 @@ class ShabAPIClient:
     async def get_public_profile(self, user_uid: str) -> Any:
         return await self._request("GET", f"profile/{user_uid}")
 
+    async def get_neighbourhoods(self, *, city: str | None = None) -> Any:
+        params: dict[str, Any] = {}
+        if city:
+            params["city"] = city
+        return await self._request("GET", "house/neighbourhoods", params=params or None)
+
+    async def get_similar_houses(self, house_id: int) -> Any:
+        return await self._request("GET", f"house/{house_id}/similar")
+
+    async def count_houses(self, params: list[tuple[str, Any]]) -> Any:
+        return await self._request("GET", "house/count", params=params)
+
+    async def get_landing_tehran(self) -> Any:
+        return await self._request("GET", "landing/tehran")
+
     # --- auth ---
 
     async def login_otp(self, mobile: str) -> Any:

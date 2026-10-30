@@ -13,9 +13,13 @@ from starlette.responses import JSONResponse
 from shab_mcp import __version__
 from shab_mcp.config import get_settings
 from shab_mcp.tools.accommodations import (
+    count_accommodations_safe,
     get_accommodation_photos_safe,
     get_accommodation_reviews_safe,
     get_accommodation_safe,
+    get_landing_tehran_safe,
+    get_similar_accommodations_safe,
+    list_neighbourhoods_safe,
     list_search_filters_safe,
     search_accommodations_safe,
 )
@@ -45,8 +49,11 @@ Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
 Discovery workflow:
 1. search_destinations(query in Persian) to resolve a city/province.
 2. list_search_filters() for amenity codes (elevator, parking, …).
-3. search_accommodations(destination, dates, guests, bedroom_count, amenities, …).
+3. search_accommodations(destination, dates, guests, amenities, bbox lat/lng, …).
+   For map areas use min/max_latitude/longitude; for nearby use user_latitude/longitude + from_map_nearby.
+   list_neighbourhoods(city), count_accommodations(...), get_similar_accommodations(id), get_landing_tehran().
 4. get_accommodation / get_accommodation_photos / get_accommodation_reviews.
+   For visual requirements (e.g. courtyard), fetch photos and judge with vision; also try amenity feature codes.
 5. check_availability(accommodation_id, dates, guests, optional discount_code).
 
 Booking workflow (authenticated):
@@ -146,8 +153,40 @@ async def search_accommodations(
         str | None,
         Field(description="Optional sort: price_asc, price_desc, or rating."),
     ] = None,
+    min_latitude: Annotated[
+        float | None,
+        Field(description="Map bbox south (with max_latitude and longitudes)."),
+    ] = None,
+    max_latitude: Annotated[
+        float | None,
+        Field(description="Map bbox north."),
+    ] = None,
+    min_longitude: Annotated[
+        float | None,
+        Field(description="Map bbox west."),
+    ] = None,
+    max_longitude: Annotated[
+        float | None,
+        Field(description="Map bbox east."),
+    ] = None,
+    user_latitude: Annotated[
+        float | None,
+        Field(description="User location latitude for nearby search."),
+    ] = None,
+    user_longitude: Annotated[
+        float | None,
+        Field(description="User location longitude for nearby search."),
+    ] = None,
+    from_map_nearby: Annotated[
+        bool | None,
+        Field(description="If true, search near user_latitude/longitude (map nearby mode)."),
+    ] = None,
+    place_id: Annotated[
+        str | None,
+        Field(description="Optional place_id from destination suggestions."),
+    ] = None,
 ) -> dict[str, Any]:
-    """Search Shab accommodations. Prices are in Toman."""
+    """Search Shab accommodations. Prices are in Toman. Supports map bbox and nearby."""
     return await search_accommodations_safe(
         destination=destination,
         province=province,
@@ -164,6 +203,14 @@ async def search_accommodations(
         bed_count=bed_count,
         amenities=amenities,
         sort_by=sort_by,
+        min_latitude=min_latitude,
+        max_latitude=max_latitude,
+        min_longitude=min_longitude,
+        max_longitude=max_longitude,
+        user_latitude=user_latitude,
+        user_longitude=user_longitude,
+        from_map_nearby=from_map_nearby,
+        place_id=place_id,
     )
 
 
@@ -190,6 +237,59 @@ async def get_accommodation_reviews(
 ) -> dict[str, Any]:
     """Fetch guest reviews for an accommodation."""
     return await get_accommodation_reviews_safe(accommodation_id, page=page)
+
+
+@mcp.tool
+async def list_neighbourhoods(
+    city: Annotated[
+        str | None,
+        Field(description="City name in Persian to list neighbourhoods, e.g. 'تهران'."),
+    ] = None,
+) -> dict[str, Any]:
+    """List neighbourhoods for map/area search."""
+    return await list_neighbourhoods_safe(city=city)
+
+
+@mcp.tool
+async def get_similar_accommodations(
+    accommodation_id: Annotated[int, Field(description="Numeric Shab house id.", ge=1)],
+) -> dict[str, Any]:
+    """List similar accommodations for a house."""
+    return await get_similar_accommodations_safe(accommodation_id)
+
+
+@mcp.tool
+async def count_accommodations(
+    destination: Annotated[str | None, Field(description="City name in Persian.")] = None,
+    province: Annotated[str | None, Field(description="Province name in Persian.")] = None,
+    guests: Annotated[int, Field(description="Number of guests.", ge=1, le=100)] = 2,
+    amenities: Annotated[list[str] | None, Field(description="Amenity feature codes.")] = None,
+    bedroom_count: Annotated[int | None, Field(description="Minimum bedrooms.", ge=0)] = None,
+    is_instant: Annotated[bool | None, Field(description="Instant-only filter.")] = None,
+    min_latitude: Annotated[float | None, Field(description="Bbox south.")] = None,
+    max_latitude: Annotated[float | None, Field(description="Bbox north.")] = None,
+    min_longitude: Annotated[float | None, Field(description="Bbox west.")] = None,
+    max_longitude: Annotated[float | None, Field(description="Bbox east.")] = None,
+) -> dict[str, Any]:
+    """Count accommodations matching filters (no full result list)."""
+    return await count_accommodations_safe(
+        destination=destination,
+        province=province,
+        guests=guests,
+        amenities=amenities,
+        bedroom_count=bedroom_count,
+        is_instant=is_instant,
+        min_latitude=min_latitude,
+        max_latitude=max_latitude,
+        min_longitude=min_longitude,
+        max_longitude=max_longitude,
+    )
+
+
+@mcp.tool
+async def get_landing_tehran() -> dict[str, Any]:
+    """Tehran landing preset (categories/filters used on the home/Tehran page)."""
+    return await get_landing_tehran_safe()
 
 
 @mcp.tool
