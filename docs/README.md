@@ -23,7 +23,11 @@ Cursor / Claude / OpenClaw / OpenWebUI / …
 | [SETUP.md](./SETUP.md) | Clone on server, Lab Pro compose, LiteLLM config, health checks, pytest |
 | [CLIENTS.md](./CLIENTS.md) | Add Shab MCP to Cursor, Claude Code, OpenClaw, VS Code Copilot, Hermes |
 | [AUTH.md](./AUTH.md) | OTP auth + access_token + payment handoff |
+| [ROADMAP.md](./ROADMAP.md) | Version plan 0.2 → 1.0 |
+| [V1_COVERAGE.md](./V1_COVERAGE.md) | Sandbox vs MCP coverage matrix |
 | [AUTH.md](./AUTH.md) | OTP auth + access_token + payment handoff |
+| [ROADMAP.md](./ROADMAP.md) | Version plan 0.2 → 1.0 |
+| [V1_COVERAGE.md](./V1_COVERAGE.md) | Sandbox vs MCP coverage matrix |
 | [ساخت MCP سفارشی.md](./ساخت%20MCP%20سفارشی.md) | Design notes / architecture (Persian) |
 
 ## Quick cheatsheet
