@@ -42,7 +42,7 @@ Legend: **done** | **planned** | **skip** (intentional)
 
 | Upstream | Tool(s) | Status |
 |----------|---------|--------|
-| `POST user`, bookmarks, discount | profile tools | planned 0.5 |
+| `GET/POST user`, bookmarks, discount | `get_user_profile`, `update_user_profile`, `list_bookmarks`, `toggle_bookmark`, `list_discounts` | done |
 | account delete OTP | — | skip |
 
 ## Host listing / ops / finance (v0.6–0.8)
@@ -62,3 +62,4 @@ Legend: **done** | **planned** | **skip** (intentional)
 | Intrack, matching/approved, career, blog, newsletter, mood-game | Marketing/SEO/webhooks |
 | Pusher `broadcasting/auth` | REST poll instead |
 | Server-side image ML | Agent vision + photo URLs |
+| `POST user/review/photo/add` | Multipart binary; use mainweb |

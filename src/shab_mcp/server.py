@@ -42,6 +42,13 @@ from shab_mcp.tools.trips import (
     get_host_profile_safe,
     list_trips_safe,
 )
+from shab_mcp.tools.profile import (
+    get_user_profile_safe,
+    list_bookmarks_safe,
+    list_discounts_safe,
+    toggle_bookmark_safe,
+    update_user_profile_safe,
+)
 from shab_mcp.tools.lifecycle import (
     cancel_booking_safe,
     change_booking_status_safe,
@@ -638,6 +645,74 @@ async def list_my_reviews(
 ) -> dict[str, Any]:
     """List reviews written by the current user."""
     return await list_my_reviews_safe(access_token=access_token, page=page)
+
+
+
+
+@mcp.tool
+async def get_user_profile(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """Get the authenticated guest profile."""
+    return await get_user_profile_safe(access_token=access_token)
+
+
+@mcp.tool
+async def update_user_profile(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    email: Annotated[str | None, Field(description="Email.")] = None,
+    gender: Annotated[str | None, Field(description="Gender code/value as used by Shab.")] = None,
+    tel: Annotated[str | None, Field(description="Landline/tel.")] = None,
+    birthdate: Annotated[str | None, Field(description="Birthdate YYYY-MM-DD.")] = None,
+    about_me: Annotated[str | None, Field(description="About me text.")] = None,
+    living_city: Annotated[str | None, Field(description="Living city.")] = None,
+    living_province: Annotated[str | None, Field(description="Living province.")] = None,
+    address: Annotated[str | None, Field(description="Address.")] = None,
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Update guest profile fields. Requires confirm=true."""
+    return await update_user_profile_safe(
+        access_token=access_token,
+        email=email,
+        gender=gender,
+        tel=tel,
+        birthdate=birthdate,
+        about_me=about_me,
+        living_city=living_city,
+        living_province=living_province,
+        address=address,
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def list_bookmarks(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+    per_page: Annotated[int, Field(description="Per page.", ge=1, le=50)] = 20,
+) -> dict[str, Any]:
+    """List bookmarked accommodations."""
+    return await list_bookmarks_safe(access_token=access_token, page=page, per_page=per_page)
+
+
+@mcp.tool
+async def toggle_bookmark(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    accommodation_id: Annotated[int, Field(description="House id.", ge=1)],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Toggle bookmark for an accommodation. Requires confirm=true."""
+    return await toggle_bookmark_safe(
+        access_token=access_token, accommodation_id=accommodation_id, confirm=confirm
+    )
+
+
+@mcp.tool
+async def list_discounts(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """List available discount codes for the guest."""
+    return await list_discounts_safe(access_token=access_token)
 
 
 if __name__ == "__main__":

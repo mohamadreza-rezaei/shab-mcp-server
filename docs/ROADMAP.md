@@ -2,7 +2,7 @@
 
 ## Current baseline
 
-- **Now:** shab-mcp **0.4.0** — discovery, OTP auth, create booking, invoice, order-tracking payment URL, trips, limited host read.
+- **Now:** shab-mcp **0.5.0** — discovery, OTP auth, create booking, invoice, order-tracking payment URL, trips, limited host read.
 - **Upstream:** sandbox `v_1_4` (`/var/www/shab-api/shab/Api/src/routes/sandbox_v_1_4.php`).
 - **Frontend truth:** mainweb → `https://api.shab.ir/api/fa/sandbox/v_1_4`.
 - **Photo / courtyard matching:** MCP returns photo URLs + amenity/`features[]`; OpenWebUI/agent vision judges visuals (no server-side CV in v1).

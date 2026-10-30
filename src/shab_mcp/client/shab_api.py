@@ -395,10 +395,13 @@ class ShabAPIClient:
         *,
         reason_id: int,
         description: str | None = None,
+        accepted_penalty: int | None = None,
     ) -> Any:
         body: dict[str, Any] = {"reason_id": reason_id}
         if description:
             body["description"] = description
+        if accepted_penalty is not None:
+            body["accepted_penalty"] = accepted_penalty
         return await self._request(
             "POST", f"reserve/{tiny_id}/cancel", json=body, access_token=access_token
         )
@@ -416,14 +419,21 @@ class ShabAPIClient:
         reserve_id: str,
         *,
         transition: str,
+        reason: str | None = None,
+        dates: list[str] | None = None,
         extra: dict[str, Any] | None = None,
     ) -> Any:
-        params: dict[str, Any] = {"transition": transition}
+        body: dict[str, Any] = {"transition": transition}
+        if reason:
+            body["reason"] = reason
+        if dates:
+            body["dates"] = dates
+        if extra:
+            body.update(extra)
         return await self._request(
             "POST",
             f"reserve/{reserve_id}/change-status",
-            params=params,
-            json=extra or {},
+            json=body,
             access_token=access_token,
         )
 
@@ -464,7 +474,8 @@ class ShabAPIClient:
                 "reserve_id": reserve_id,
                 "text": text,
                 "type": msg_type,
-                "is_sent_by_me": True,
+                "reference_id": None,
+                "client_ref": None,
             },
             access_token=access_token,
         )
@@ -506,3 +517,27 @@ class ShabAPIClient:
             params={"page": page},
             access_token=access_token,
         )
+
+    # --- guest profile (v0.5) ---
+
+    async def update_user(self, access_token: str, *, payload: dict[str, Any]) -> Any:
+        return await self._request("POST", "user", json=payload, access_token=access_token)
+
+    async def list_bookmarks(self, access_token: str, *, page: int = 1, per_page: int = 20) -> Any:
+        return await self._request(
+            "GET",
+            "profile/bookmarks",
+            params={"page": page, "perpage": per_page, "with[]": "photos"},
+            access_token=access_token,
+        )
+
+    async def toggle_bookmark(self, access_token: str, *, house_id: int) -> Any:
+        return await self._request(
+            "POST",
+            "house/bookmark",
+            json={"house_id": house_id},
+            access_token=access_token,
+        )
+
+    async def list_discounts(self, access_token: str) -> Any:
+        return await self._request("GET", "user/discount", access_token=access_token)

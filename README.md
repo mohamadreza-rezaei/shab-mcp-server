@@ -12,7 +12,7 @@ Designed to run inside **AI Lab Pro** and be consumed through **LiteLLM’s MCP 
 | [docs/SETUP.md](docs/SETUP.md) | Server deploy, Lab Pro compose, LiteLLM MCP, testing |
 | [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor, Claude Code, OpenClaw, Copilot, Hermes, OpenWebUI |
 
-## Tools (v0.4)
+## Tools (v0.5)
 
 | Tool | Purpose |
 |------|---------|

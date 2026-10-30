@@ -74,6 +74,7 @@ async def cancel_booking_impl(
     reserve_id: str,
     reason_id: int,
     description: str | None = None,
+    accepted_penalty: int | None = None,
     confirm: bool = False,
 ) -> dict[str, Any]:
     if not confirm:
@@ -88,7 +89,11 @@ async def cancel_booking_impl(
         raise ShabValidationError("reason_id must be a positive integer.")
     async with ShabAPIClient() as api:
         data = await api.cancel_reserve(
-            token, rid, reason_id=reason_id, description=(description or "").strip() or None
+            token,
+            rid,
+            reason_id=reason_id,
+            description=(description or "").strip() or None,
+            accepted_penalty=accepted_penalty,
         )
     return {"ok": True, "reserve_id": rid, "result": _slim(data)}
 
@@ -111,6 +116,8 @@ async def change_booking_status_impl(
     access_token: str,
     reserve_id: str,
     transition: str,
+    reason: str | None = None,
+    dates: list[str] | None = None,
     confirm: bool = False,
 ) -> dict[str, Any]:
     if not confirm:
@@ -119,12 +126,28 @@ async def change_booking_status_impl(
         )
     token = require_access_token(access_token)
     rid = (reserve_id or "").strip()
-    code = (transition or "").strip().upper()
+    code = (transition or "").strip()
     if not rid or not code:
         raise ShabValidationError("reserve_id and transition are required.")
     async with ShabAPIClient() as api:
-        data = await api.change_reserve_status(token, rid, transition=code)
+        data = await api.change_reserve_status(
+            token, rid, transition=code, reason=reason, dates=dates
+        )
     return {"ok": True, "reserve_id": rid, "transition": code, "result": _slim(data)}
+
+
+async def reject_booking_impl(
+    *, access_token: str, reserve_id: str, confirm: bool = False
+) -> dict[str, Any]:
+    if not confirm:
+        raise ShabValidationError("reject_booking requires confirm=true.")
+    token = require_access_token(access_token)
+    rid = (reserve_id or "").strip()
+    if not rid:
+        raise ShabValidationError("reserve_id is required.")
+    async with ShabAPIClient() as api:
+        data = await api.reject_reserve_guest(token, body={"reserve_id": rid})
+    return {"ok": True, "reserve_id": rid, "result": _slim(data)}
 
 
 async def list_chats_impl(*, access_token: str, page: int = 1) -> dict[str, Any]:
@@ -194,41 +217,76 @@ async def submit_review_impl(
     *,
     access_token: str,
     reserve_id: str,
-    rating: int | None = None,
-    comment: str | None = None,
-    payload: dict[str, Any] | None = None,
+    step: int,
+    host: int | None = None,
+    value: int | None = None,
+    accuracy: int | None = None,
+    cleanliness: int | None = None,
+    accessibility: int | None = None,
+    suggest: int | None = None,
+    positives: list[str] | None = None,
+    negatives: list[str] | None = None,
+    description: str | None = None,
+    anonymous: bool | None = None,
+    private_message: str | None = None,
     confirm: bool = False,
 ) -> dict[str, Any]:
+    """Submit one review wizard step (1=points, 2=positives, 3=negatives, 4=description)."""
     if not confirm:
         raise ShabValidationError("submit_review requires confirm=true.")
     token = require_access_token(access_token)
     rid = (reserve_id or "").strip()
     if not rid:
         raise ShabValidationError("reserve_id is required.")
-    body: dict[str, Any] = dict(payload or {})
-    body.setdefault("reservation_id", rid)
-    body.setdefault("reserve_id", rid)
-    if rating is not None:
-        body.setdefault("rating", rating)
-    if comment:
-        body.setdefault("comment", comment)
-        body.setdefault("description", comment)
+    if step not in {1, 2, 3, 4}:
+        raise ShabValidationError("step must be 1 (points), 2 (positives), 3 (negatives), or 4 (description).")
+    body: dict[str, Any] = {"reservation_id": rid, "step": step}
+    if step == 1:
+        for key, val in (
+            ("host", host),
+            ("value", value),
+            ("accuracy", accuracy),
+            ("cleanliness", cleanliness),
+            ("accessibility", accessibility),
+            ("suggest", suggest),
+        ):
+            if val is not None:
+                body[key] = val
+    elif step == 2 and positives is not None:
+        body["positives"] = positives
+    elif step == 3 and negatives is not None:
+        body["negatives"] = negatives
+    elif step == 4:
+        if description is not None:
+            body["description"] = description
+        if anonymous is not None:
+            body["anonymous"] = anonymous
+        if private_message is not None:
+            body["private_message"] = private_message
     async with ShabAPIClient() as api:
         data = await api.store_review(token, payload=body)
-    return {"ok": True, "reserve_id": rid, "result": _slim(data)}
+    return {"ok": True, "reserve_id": rid, "step": step, "result": _slim(data)}
 
 
 async def comment_on_review_impl(
-    *, access_token: str, payload: dict[str, Any], confirm: bool = False
+    *,
+    access_token: str,
+    review_id: str,
+    comment: str,
+    confirm: bool = False,
 ) -> dict[str, Any]:
     if not confirm:
         raise ShabValidationError("comment_on_review requires confirm=true.")
     token = require_access_token(access_token)
-    if not payload:
-        raise ShabValidationError("payload is required (mainweb review comment body).")
+    rid = (review_id or "").strip()
+    text = (comment or "").strip()
+    if not rid or not text:
+        raise ShabValidationError("review_id and comment are required.")
     async with ShabAPIClient() as api:
-        data = await api.store_review_comment(token, payload=payload)
-    return {"ok": True, "result": _slim(data)}
+        data = await api.store_review_comment(
+            token, payload={"review_id": rid, "comment": text}
+        )
+    return {"ok": True, "review_id": rid, "result": _slim(data)}
 
 
 async def list_my_reviews_impl(*, access_token: str, page: int = 1) -> dict[str, Any]:
@@ -253,6 +311,7 @@ get_cancellation_penalty_safe = _safe(get_cancellation_penalty_impl)
 cancel_booking_safe = _safe(cancel_booking_impl)
 get_eligible_transitions_safe = _safe(get_eligible_transitions_impl)
 change_booking_status_safe = _safe(change_booking_status_impl)
+reject_booking_safe = _safe(reject_booking_impl)
 list_chats_safe = _safe(list_chats_impl)
 get_chat_thread_safe = _safe(get_chat_thread_impl)
 send_chat_message_safe = _safe(send_chat_message_impl)
