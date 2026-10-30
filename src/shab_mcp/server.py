@@ -133,39 +133,6 @@ from shab_mcp.tools.office_followups import (
     office_set_house_support_status_safe,
     office_update_checkin_followup_safe,
 )
-from shab_mcp.tools.office_reads import (
-    office_get_house_safe,
-    office_get_notes_safe,
-    office_get_reserve_chat_safe,
-    office_get_reserve_safe,
-    office_get_reserve_transitions_safe,
-    office_get_user_safe,
-    office_get_user_stats_safe,
-    office_list_chats_safe,
-    office_list_notes_safe,
-    office_search_houses_safe,
-    office_search_reserves_safe,
-    office_search_users_safe,
-)
-from shab_mcp.tools.office_writes import (
-    office_add_note_safe,
-    office_cancel_reserve_safe,
-    office_change_reserve_status_safe,
-    office_list_message_templates_safe,
-    office_refund_payment_safe,
-    office_search_payments_safe,
-    office_send_notification_safe,
-    office_tag_reserve_safe,
-)
-from shab_mcp.tools.office_followups import (
-    office_generate_easy_login_link_safe,
-    office_list_cancellation_followups_safe,
-    office_list_checkin_followups_safe,
-    office_list_review_followups_safe,
-    office_set_house_support_status_safe,
-    office_update_checkin_followup_safe,
-)
-
 INSTRUCTIONS = """\
 Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
 
@@ -1102,7 +1069,6 @@ async def office_login(
     """Staff login to Shab backoffice. Returns staff_token for office_* tools."""
     return await office_login_safe(mobile=mobile, password=password)
 
-
 @mcp.tool
 async def office_search_users(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1112,7 +1078,6 @@ async def office_search_users(
     """Search backoffice users grid."""
     return await office_search_users_safe(staff_token=staff_token, q=q, page=page)
 
-
 @mcp.tool
 async def office_get_user(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1121,7 +1086,6 @@ async def office_get_user(
     """Get one backoffice user."""
     return await office_get_user_safe(staff_token=staff_token, user_id=user_id)
 
-
 @mcp.tool
 async def office_get_user_stats(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1129,7 +1093,6 @@ async def office_get_user_stats(
 ) -> dict[str, Any]:
     """User statistics from backoffice."""
     return await office_get_user_stats_safe(staff_token=staff_token, user_id=user_id)
-
 
 @mcp.tool
 async def office_search_reserves(
@@ -1140,7 +1103,6 @@ async def office_search_reserves(
     """Search reservations in backoffice."""
     return await office_search_reserves_safe(staff_token=staff_token, q=q, page=page)
 
-
 @mcp.tool
 async def office_get_reserve(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1149,7 +1111,6 @@ async def office_get_reserve(
     """Get reservation detail."""
     return await office_get_reserve_safe(staff_token=staff_token, reserve_id=reserve_id)
 
-
 @mcp.tool
 async def office_get_reserve_chat(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1157,7 +1118,6 @@ async def office_get_reserve_chat(
 ) -> dict[str, Any]:
     """Get chat thread for a reservation."""
     return await office_get_reserve_chat_safe(staff_token=staff_token, reserve_id=reserve_id)
-
 
 @mcp.tool
 async def office_get_reserve_transitions(
@@ -1169,7 +1129,6 @@ async def office_get_reserve_transitions(
         staff_token=staff_token, reserve_id=reserve_id
     )
 
-
 @mcp.tool
 async def office_search_houses(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1179,7 +1138,6 @@ async def office_search_houses(
     """Search houses in backoffice."""
     return await office_search_houses_safe(staff_token=staff_token, q=q, page=page)
 
-
 @mcp.tool
 async def office_get_house(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1187,7 +1145,6 @@ async def office_get_house(
 ) -> dict[str, Any]:
     """Get house detail from backoffice."""
     return await office_get_house_safe(staff_token=staff_token, house_id=house_id)
-
 
 @mcp.tool
 async def office_list_chats(
@@ -1197,7 +1154,6 @@ async def office_list_chats(
     """List backoffice chats."""
     return await office_list_chats_safe(staff_token=staff_token, page=page)
 
-
 @mcp.tool
 async def office_list_notes(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1205,7 +1161,6 @@ async def office_list_notes(
 ) -> dict[str, Any]:
     """List staff notes."""
     return await office_list_notes_safe(staff_token=staff_token, page=page)
-
 
 @mcp.tool
 async def office_get_notes(
@@ -1217,123 +1172,6 @@ async def office_get_notes(
     return await office_get_notes_safe(
         staff_token=staff_token, note_type=note_type, model_id=model_id
     )
-
-
-@mcp.tool
-async def office_search_users(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    q: Annotated[str | None, Field(description="Search query (mobile, name, id).")] = None,
-    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
-) -> dict[str, Any]:
-    """Search backoffice users grid."""
-    return await office_search_users_safe(staff_token=staff_token, q=q, page=page)
-
-
-@mcp.tool
-async def office_get_user(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    user_id: Annotated[int, Field(description="User id.", ge=1)],
-) -> dict[str, Any]:
-    """Get one backoffice user."""
-    return await office_get_user_safe(staff_token=staff_token, user_id=user_id)
-
-
-@mcp.tool
-async def office_get_user_stats(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    user_id: Annotated[int, Field(description="User id.", ge=1)],
-) -> dict[str, Any]:
-    """User statistics from backoffice."""
-    return await office_get_user_stats_safe(staff_token=staff_token, user_id=user_id)
-
-
-@mcp.tool
-async def office_search_reserves(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    q: Annotated[str | None, Field(description="Search query.")] = None,
-    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
-) -> dict[str, Any]:
-    """Search reservations in backoffice."""
-    return await office_search_reserves_safe(staff_token=staff_token, q=q, page=page)
-
-
-@mcp.tool
-async def office_get_reserve(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
-) -> dict[str, Any]:
-    """Get reservation detail."""
-    return await office_get_reserve_safe(staff_token=staff_token, reserve_id=reserve_id)
-
-
-@mcp.tool
-async def office_get_reserve_chat(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
-) -> dict[str, Any]:
-    """Get chat thread for a reservation."""
-    return await office_get_reserve_chat_safe(staff_token=staff_token, reserve_id=reserve_id)
-
-
-@mcp.tool
-async def office_get_reserve_transitions(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
-) -> dict[str, Any]:
-    """Eligible status transitions for a reservation."""
-    return await office_get_reserve_transitions_safe(
-        staff_token=staff_token, reserve_id=reserve_id
-    )
-
-
-@mcp.tool
-async def office_search_houses(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    q: Annotated[str | None, Field(description="Search query.")] = None,
-    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
-) -> dict[str, Any]:
-    """Search houses in backoffice."""
-    return await office_search_houses_safe(staff_token=staff_token, q=q, page=page)
-
-
-@mcp.tool
-async def office_get_house(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    house_id: Annotated[int, Field(description="House id.", ge=1)],
-) -> dict[str, Any]:
-    """Get house detail from backoffice."""
-    return await office_get_house_safe(staff_token=staff_token, house_id=house_id)
-
-
-@mcp.tool
-async def office_list_chats(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
-) -> dict[str, Any]:
-    """List backoffice chats."""
-    return await office_list_chats_safe(staff_token=staff_token, page=page)
-
-
-@mcp.tool
-async def office_list_notes(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
-) -> dict[str, Any]:
-    """List staff notes."""
-    return await office_list_notes_safe(staff_token=staff_token, page=page)
-
-
-@mcp.tool
-async def office_get_notes(
-    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
-    note_type: Annotated[str, Field(description="Model type, e.g. reserve, user, house.")],
-    model_id: Annotated[int, Field(description="Model id.", ge=1)],
-) -> dict[str, Any]:
-    """Get notes for a specific model."""
-    return await office_get_notes_safe(
-        staff_token=staff_token, note_type=note_type, model_id=model_id
-    )
-
 
 @mcp.tool
 async def office_logout(
@@ -1342,7 +1180,6 @@ async def office_logout(
     """Revoke staff backoffice session."""
     return await office_logout_safe(staff_token=staff_token)
 
-
 @mcp.tool
 async def office_bootstrap(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1350,15 +1187,12 @@ async def office_bootstrap(
     """Load backoffice bootstrap (user_info + permissions)."""
     return await office_bootstrap_safe(staff_token=staff_token)
 
-
 @mcp.tool
 async def office_auth_status(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
 ) -> dict[str, Any]:
     """Check whether staff_token is still valid."""
     return await office_auth_status_safe(staff_token=staff_token)
-
-
 
 @mcp.tool
 async def office_change_reserve_status(
@@ -1375,7 +1209,6 @@ async def office_change_reserve_status(
         confirm=confirm,
     )
 
-
 @mcp.tool
 async def office_cancel_reserve(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1388,7 +1221,6 @@ async def office_cancel_reserve(
         staff_token=staff_token, reserve_id=reserve_id, confirm=confirm, reason=reason
     )
 
-
 @mcp.tool
 async def office_tag_reserve(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1400,7 +1232,6 @@ async def office_tag_reserve(
         staff_token=staff_token, reservation_id=reservation_id, tag=tag
     )
 
-
 @mcp.tool
 async def office_search_payments(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1409,7 +1240,6 @@ async def office_search_payments(
 ) -> dict[str, Any]:
     """Search payments."""
     return await office_search_payments_safe(staff_token=staff_token, q=q, page=page)
-
 
 @mcp.tool
 async def office_refund_payment(
@@ -1422,14 +1252,12 @@ async def office_refund_payment(
         staff_token=staff_token, payment_id=payment_id, confirm=confirm
     )
 
-
 @mcp.tool
 async def office_list_message_templates(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
 ) -> dict[str, Any]:
     """List notification message templates."""
     return await office_list_message_templates_safe(staff_token=staff_token)
-
 
 @mcp.tool
 async def office_send_notification(
@@ -1442,7 +1270,6 @@ async def office_send_notification(
         staff_token=staff_token, payload=payload, confirm=confirm
     )
 
-
 @mcp.tool
 async def office_add_note(
     staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
@@ -1450,6 +1277,68 @@ async def office_add_note(
 ) -> dict[str, Any]:
     """Add an internal staff note."""
     return await office_add_note_safe(staff_token=staff_token, payload=payload)
+
+@mcp.tool
+async def office_list_checkin_followups(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List check-in followup queue."""
+    return await office_list_checkin_followups_safe(staff_token=staff_token, page=page)
+
+@mcp.tool
+async def office_update_checkin_followup(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reservation_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+    payload: Annotated[dict[str, Any], Field(description="Followup update body.")],
+) -> dict[str, Any]:
+    """Update a check-in followup task."""
+    return await office_update_checkin_followup_safe(
+        staff_token=staff_token, reservation_id=reservation_id, payload=payload
+    )
+
+@mcp.tool
+async def office_list_cancellation_followups(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List cancellation followups."""
+    return await office_list_cancellation_followups_safe(staff_token=staff_token, page=page)
+
+@mcp.tool
+async def office_list_review_followups(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List review followups."""
+    return await office_list_review_followups_safe(staff_token=staff_token, page=page)
+
+@mcp.tool
+async def office_set_house_support_status(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    payload: Annotated[dict[str, Any], Field(description="Support-status change body.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Change house support status."""
+    return await office_set_house_support_status_safe(
+        staff_token=staff_token, payload=payload, confirm=confirm
+    )
+
+
+@mcp.tool
+async def office_generate_easy_login_link(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    user_id: Annotated[int, Field(description="Target user id.", ge=1)],
+    agent_mobile: Annotated[str, Field(description="Staff/agent mobile for agentId stamp.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Generate browser/SMS easy-login link for a user (handoff, not MCP impersonation)."""
+    return await office_generate_easy_login_link_safe(
+        staff_token=staff_token,
+        user_id=user_id,
+        agent_mobile=agent_mobile,
+        confirm=confirm,
+    )
 
 
 if __name__ == "__main__":
