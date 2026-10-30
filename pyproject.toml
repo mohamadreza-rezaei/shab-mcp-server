@@ -1,6 +1,6 @@
 [project]
 name = "shab-mcp"
-version = "1.4.0"
+version = "1.5.0"
 description = "MCP server for Shab accommodation APIs (sandbox v1.4) — discovery + guest booking assistant."
 readme = "README.md"
 requires-python = ">=3.10"

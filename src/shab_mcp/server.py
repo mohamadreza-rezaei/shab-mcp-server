@@ -125,6 +125,14 @@ from shab_mcp.tools.office_writes import (
     office_send_notification_safe,
     office_tag_reserve_safe,
 )
+from shab_mcp.tools.office_followups import (
+    office_generate_easy_login_link_safe,
+    office_list_cancellation_followups_safe,
+    office_list_checkin_followups_safe,
+    office_list_review_followups_safe,
+    office_set_house_support_status_safe,
+    office_update_checkin_followup_safe,
+)
 from shab_mcp.tools.office_reads import (
     office_get_house_safe,
     office_get_notes_safe,
@@ -148,6 +156,14 @@ from shab_mcp.tools.office_writes import (
     office_search_payments_safe,
     office_send_notification_safe,
     office_tag_reserve_safe,
+)
+from shab_mcp.tools.office_followups import (
+    office_generate_easy_login_link_safe,
+    office_list_cancellation_followups_safe,
+    office_list_checkin_followups_safe,
+    office_list_review_followups_safe,
+    office_set_house_support_status_safe,
+    office_update_checkin_followup_safe,
 )
 
 INSTRUCTIONS = """\

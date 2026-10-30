@@ -46,11 +46,11 @@ Status values: `planned` | `done` | `skip`.
 
 | Upstream | Tool | Status |
 |----------|------|--------|
-| `GET/POST followup/reservations/checkin…` | `office_list_checkin_followups` / `office_update_checkin_followup` | planned |
-| `GET/POST followup/reservations/cancellation…` | `office_list_cancellation_followups` | planned |
-| `GET/POST followup/reservations/review…` | `office_list_review_followups` | planned |
-| `POST house/{id}/support-status/change` | `office_set_house_support_status` | planned |
-| `POST user/{id}/easy/login-link` | `office_generate_easy_login_link` | planned |
+| `GET/POST followup/reservations/checkin…` | `office_list_checkin_followups` / `office_update_checkin_followup` | done |
+| `GET/POST followup/reservations/cancellation…` | `office_list_cancellation_followups` | done |
+| `GET/POST followup/reservations/review…` | `office_list_review_followups` | done |
+| `POST house/{id}/support-status/change` | `office_set_house_support_status` | done |
+| `POST user/{id}/easy/login-link` | `office_generate_easy_login_link` | done |
 
 ## Host & Guest extras (1.6)
 

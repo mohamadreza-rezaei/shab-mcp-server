@@ -57,4 +57,4 @@ flowchart LR
 
 ## Status
 
-**1.4 writes shipped**. Next: **1.5** followups.
+**1.5 followups shipped**. Next: **1.6** HG extras.
