@@ -97,7 +97,7 @@ Add (or copy from Lab Pro `.env.example`):
 ```bash
 # Build / resource
 SHAB_MCP_BUILD_CONTEXT=../../shab-mcp-server
-SHAB_MCP_IMAGE=shab-mcp:0.1.0
+SHAB_MCP_IMAGE=shab-mcp:0.2.0
 SHAB_MCP_MEMORY=256M
 SHAB_MCP_CPUS=0.5
 
@@ -118,7 +118,9 @@ cd /home/mrezaei/ai-lab
 # Full stack (or at least MCP + LiteLLM)
 make up
 # or:
-docker compose up -d --build shab-mcp
+make shab-mcp-rebuild
+# or:
+docker compose up -d --build --force-recreate shab-mcp
 docker compose restart litellm
 ```
 
@@ -229,8 +231,8 @@ Replace the host if your Lab Pro LiteLLM domain differs. Local tunnel/debug: `ht
 
 ```bash
 cd /path/to/shab-mcp-server
-uv sync --extra dev
-uv run pytest
+make test
+# or: uv sync --extra dev && uv run pytest
 ```
 
 Optional live calls against production Shab API:
@@ -325,7 +327,9 @@ To point LiteLLM at a host-run MCP, register a URL reachable from the LiteLLM co
 ```bash
 cd /home/mrezaei/shab-mcp-server && git pull
 cd /home/mrezaei/ai-lab
-docker compose up -d --build shab-mcp
+make shab-mcp-rebuild
+# or:
+docker compose up -d --build --force-recreate shab-mcp
 docker compose restart litellm
 ```
 

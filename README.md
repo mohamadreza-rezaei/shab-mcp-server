@@ -81,8 +81,12 @@ Local host testing without Docker: run `SHAB_MCP_PORT=8765 uv run shab-mcp`, the
 ## Tests
 
 ```bash
+make sync          # uv sync --extra dev
+make test          # mocked unit tests (default)
+make test-live     # include @pytest.mark.live (hits api.shab.ir)
+# or:
 uv run pytest
-uv run pytest -m live   # hits api.shab.ir
+uv run pytest -m live
 ```
 
 ## Configuration
