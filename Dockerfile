@@ -4,16 +4,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     SHAB_MCP_HOST=0.0.0.0 \
     SHAB_MCP_PORT=8000 \
-    SHAB_MCP_TRANSPORT=http
+    SHAB_MCP_TRANSPORT=http \
+    UV_LINK_MODE=copy
 
 WORKDIR /app
 
 RUN useradd --create-home --uid 10001 appuser
 
+COPY --from=ghcr.io/astral-sh/uv:0.9.5 /uv /usr/local/bin/uv
+
 COPY pyproject.toml README.md ./
 COPY src ./src
 
-RUN pip install --no-cache-dir .
+# Install project (avoid pip hash-mismatch flakes on transitive wheels).
+RUN uv pip install --system --no-cache .
 
 USER appuser
 EXPOSE 8000
