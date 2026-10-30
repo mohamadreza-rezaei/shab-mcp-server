@@ -140,6 +140,10 @@ from shab_mcp.tools.office_hg import (
     office_review_withdraw_safe,
     office_update_review_safe,
 )
+from shab_mcp.tools.office_impersonate import (
+    office_end_impersonation_safe,
+    office_impersonate_user_safe,
+)
 INSTRUCTIONS = """\
 Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
 
@@ -1402,6 +1406,32 @@ async def office_review_withdraw(
     return await office_review_withdraw_safe(
         staff_token=staff_token, request_id=request_id, status=status, confirm=confirm
     )
+
+
+@mcp.tool
+async def office_impersonate_user(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    user_id: Annotated[int, Field(description="Target user id.", ge=1)],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+    agent_mobile: Annotated[
+        str | None, Field(description="Optional agent mobile; defaults to staff user.")
+    ] = None,
+) -> dict[str, Any]:
+    """Issue short-lived user access_token to act as user on sandbox guest/host tools."""
+    return await office_impersonate_user_safe(
+        staff_token=staff_token,
+        user_id=user_id,
+        confirm=confirm,
+        agent_mobile=agent_mobile,
+    )
+
+
+@mcp.tool
+async def office_end_impersonation(
+    access_token: Annotated[str, Field(description="Impersonated user access_token.")],
+) -> dict[str, Any]:
+    """Revoke an impersonated user access_token."""
+    return await office_end_impersonation_safe(access_token=access_token)
 
 
 if __name__ == "__main__":

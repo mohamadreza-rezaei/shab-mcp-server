@@ -64,8 +64,8 @@ Status values: `planned` | `done` | `skip`.
 
 | Upstream | Tool | Status |
 |----------|------|--------|
-| `POST user/{id}/easy/login-token` (MCP) | `office_impersonate_user` | planned |
-| — | `office_end_impersonation` | planned |
+| `POST user/{id}/easy/login-token` (MCP) | `office_impersonate_user` | done |
+| — | `office_end_impersonation` | done |
 
 ## Intentionally skipped
 

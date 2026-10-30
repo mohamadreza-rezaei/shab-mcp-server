@@ -57,4 +57,4 @@ flowchart LR
 
 ## Status
 
-**1.6 HG extras shipped**. Next: **2.0** act-as-user.
+**2.0.0 released** — Office MCP complete for Call Center + Host & Guest (act-as-user included).

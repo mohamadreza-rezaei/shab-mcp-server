@@ -12,13 +12,13 @@ Related: [OFFICE_ROADMAP.md](./OFFICE_ROADMAP.md), [OFFICE_COVERAGE.md](./OFFICE
 |--------|------:|--------|
 | Backoffice `v_1_4` active routes | **~162** | `Route::get/post/any` in `backoffice_v_1_4.php` (82 GET + 79 POST + 1 ANY), non-commented |
 | Admin SPA path templates | **~166** | `shab-admin` `APIClient.js` |
-| Office MCP tools (target v2) | **~35–45** | `office_*` in `server.py` (grows per phase) |
+| Office MCP tools (v2.0) | **~37** | `@mcp.tool` `office_*` in `server.py` |
 | Product scope | Call Center + Host & Guest | Not 100% of backoffice |
 | Public exposure | **Separate allowlist** | `shab_office_mcp` ≠ `shab_mcp` |
 
 **Product takeaway:** Staff agents do support work via backoffice tools under staff ACL. Acting as a user (mainweb/host-panel shaped actions) is a **v2** capability behind permissions, confirm, and audit — not available to website chatbots.
 
-Finalize wrap % at **2.0** once tools land.
+**v2.0 wrap:** ~37 office tools covering Call Center + HG workflows (~23% of 162 backoffice routes by intent; not every admin SPA path).
 
 ---
 
