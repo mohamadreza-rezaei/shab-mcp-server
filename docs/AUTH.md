@@ -13,12 +13,14 @@ Unregistered mobiles return `status: register` — complete signup on [www.shab.
 
 ## Origin / token issuance
 
+`SHAB_API_ORIGIN` is **only an HTTP `Origin` request header** sent to `api.shab.ir` so Sanctum returns a Bearer `access_token` instead of a browser cookie session. It is **not** a real hostname, DNS record, or public MCP URL. Agents reach Shab MCP via **LiteLLM** (e.g. `https://litellm.shab.systems/shab_mcp/mcp` or Docker `http://litellm:4000/shab_mcp/mcp`). The `shab-mcp` container stays internal (`http://shab-mcp:8000/mcp`).
+
 Shab returns a Bearer token when the request `Origin` is **not** a Sanctum stateful SPA domain (`shab.ir`, etc.).
 
 Configure:
 
 ```bash
-SHAB_API_ORIGIN=https://mcp.shab.systems   # default
+SHAB_API_ORIGIN=https://shab-mcp.internal   # default
 SHAB_API_PLATFORM=mcp
 ```
 
