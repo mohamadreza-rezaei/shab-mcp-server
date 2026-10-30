@@ -165,7 +165,7 @@ async def test_booking_and_payment(fixture_json):
     )
     assert inv["invoice_id"] == "nfXS"
     pay = await get_payment_link_impl(access_token="tok", reserve_id="nsPG", invoice_id="nfXS")
-    assert "pay?" in pay["payment_url"]
+    assert pay["payment_url"].endswith("/order-tracking/nfXS/show")
     assert pay["gateways"][0]["name"] == "ملت"
 
 

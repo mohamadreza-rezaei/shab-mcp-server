@@ -127,7 +127,9 @@ async def get_payment_link_impl(
         calc = normalize_invoice_calculate(invoice_raw)
         amount = calc.get("prepayment") or calc.get("total")
 
-    payment_url = f"{web}/pay?invoice={iid}&reservation={rid}"
+    # Mainweb route after create reserve: /order-tracking/{invoice_id}/show
+    # (shab-mainweb useHouse.redirectToInvoice / trips reserve cards).
+    payment_url = f"{web}/order-tracking/{iid}/show"
 
     return {
         "payment_url": payment_url,
@@ -137,8 +139,9 @@ async def get_payment_link_impl(
         "currency": "Toman",
         "gateways": normalize_gateways(gateways_raw),
         "instruction": (
-            "Open payment_url in a browser and complete card payment on Shab/IPG. "
-            "MCP cannot enter card details. After paying, poll get_booking or list_trips."
+            "Open payment_url (order-tracking page) in a browser, apply discount if needed, "
+            "and complete card payment on Shab/IPG. MCP cannot enter card details. "
+            "After paying, poll get_booking or list_trips."
         ),
     }
 

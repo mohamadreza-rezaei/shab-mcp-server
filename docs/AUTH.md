@@ -28,7 +28,7 @@ If `verify_login_otp` succeeds but has no `access_token`, `SHAB_API_ORIGIN` is l
 
 ## Payment
 
-`get_payment_link` returns a Shab web `payment_url`. The user completes card/IPG payment in a browser. MCP never collects card data.
+`get_payment_link` returns `{SHAB_WEB_BASE_URL}/order-tracking/{invoice_id}/show` (same as mainweb after reserve). The user completes card/IPG payment in a browser. MCP never collects card data.
 
 ## Security notes
 
