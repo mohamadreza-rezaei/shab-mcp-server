@@ -585,3 +585,67 @@ class ShabAPIClient:
         return await self._request(
             "POST", f"house/{house_id}/delete", access_token=access_token
         )
+
+    # --- host ops (v0.7) ---
+
+    async def get_host_calendar(
+        self,
+        access_token: str,
+        house_id: int,
+        *,
+        from_date: str,
+        to_date: str,
+    ) -> Any:
+        return await self._request(
+            "GET",
+            f"house/{house_id}/host-calendar",
+            params={"from_date": from_date, "to_date": to_date, "type": "host"},
+            access_token=access_token,
+        )
+
+    async def edit_house_calendar(
+        self, access_token: str, house_id: int, *, payload: dict[str, Any]
+    ) -> Any:
+        return await self._request(
+            "POST",
+            f"house/{house_id}/calendar",
+            json=payload,
+            access_token=access_token,
+        )
+
+    async def get_house_pricing(
+        self, access_token: str, *, house_ids: list[int]
+    ) -> Any:
+        params = [("house_ids[]", hid) for hid in house_ids]
+        return await self._request(
+            "GET",
+            "midterm/house-pricing",
+            params=params,
+            access_token=access_token,
+        )
+
+    async def store_house_pricing(
+        self, access_token: str, *, house_prices: list[dict[str, Any]]
+    ) -> Any:
+        return await self._request(
+            "POST",
+            "midterm/house-pricing",
+            json={"house_prices": house_prices},
+            access_token=access_token,
+        )
+
+    async def get_price_suggestion(
+        self, access_token: str, house_id: int, *, dates: list[str]
+    ) -> Any:
+        params = [("dates[]", d) for d in dates]
+        return await self._request(
+            "GET",
+            f"house/{house_id}/price-suggestion",
+            params=params,
+            access_token=access_token,
+        )
+
+    async def get_reserve_guest(self, access_token: str, reserve_id: str) -> Any:
+        return await self._request(
+            "GET", f"reserve/{reserve_id}/guest", access_token=access_token
+        )

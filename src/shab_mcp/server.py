@@ -42,6 +42,15 @@ from shab_mcp.tools.trips import (
     get_host_profile_safe,
     list_trips_safe,
 )
+from shab_mcp.tools.host_ops import (
+    get_booking_guest_safe,
+    get_host_calendar_safe,
+    get_house_pricing_safe,
+    get_price_suggestion_safe,
+    list_host_reserves_safe,
+    update_host_calendar_safe,
+    update_house_pricing_safe,
+)
 from shab_mcp.tools.host_listing import (
     create_host_listing_safe,
     get_my_house_safe,
@@ -795,6 +804,91 @@ async def set_house_enabled(
     return await set_house_enabled_safe(
         access_token=access_token, house_id=house_id, enabled=enabled, confirm=confirm
     )
+
+
+
+
+@mcp.tool
+async def get_host_calendar(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+    from_date: Annotated[str, Field(description="Jalali start YYYY-MM-DD.")],
+    to_date: Annotated[str, Field(description="Jalali end YYYY-MM-DD.")],
+) -> dict[str, Any]:
+    """Fetch host calendar for a house date range."""
+    return await get_host_calendar_safe(
+        access_token=access_token,
+        house_id=house_id,
+        from_date=from_date,
+        to_date=to_date,
+    )
+
+
+@mcp.tool
+async def update_host_calendar(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+    payload: Annotated[
+        dict[str, Any],
+        Field(description="Calendar edit body (action/dates/prices as mainweb)."),
+    ],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Update host calendar (block/open/price days). Requires confirm=true."""
+    return await update_host_calendar_safe(
+        access_token=access_token, house_id=house_id, payload=payload, confirm=confirm
+    )
+
+
+@mcp.tool
+async def get_house_pricing(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_ids: Annotated[list[int], Field(description="House ids to fetch midterm pricing for.")],
+) -> dict[str, Any]:
+    """Get midterm/house pricing for host houses."""
+    return await get_house_pricing_safe(access_token=access_token, house_ids=house_ids)
+
+
+@mcp.tool
+async def update_house_pricing(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_prices: Annotated[list[dict[str, Any]], Field(description="house_prices payload.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Store midterm house pricing. Requires confirm=true."""
+    return await update_house_pricing_safe(
+        access_token=access_token, house_prices=house_prices, confirm=confirm
+    )
+
+
+@mcp.tool
+async def get_price_suggestion(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+    dates: Annotated[list[str], Field(description="Jalali dates YYYY-MM-DD.")],
+) -> dict[str, Any]:
+    """Get smart price suggestion for dates."""
+    return await get_price_suggestion_safe(
+        access_token=access_token, house_id=house_id, dates=dates
+    )
+
+
+@mcp.tool
+async def list_host_reserves(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List reservations for the authenticated host (type=host)."""
+    return await list_host_reserves_safe(access_token=access_token, page=page)
+
+
+@mcp.tool
+async def get_booking_guest(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id.")],
+) -> dict[str, Any]:
+    """Get guest contact/info for a host-side reservation."""
+    return await get_booking_guest_safe(access_token=access_token, reserve_id=reserve_id)
 
 
 if __name__ == "__main__":
