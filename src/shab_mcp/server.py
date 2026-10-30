@@ -115,6 +115,16 @@ from shab_mcp.tools.office_reads import (
     office_search_reserves_safe,
     office_search_users_safe,
 )
+from shab_mcp.tools.office_writes import (
+    office_add_note_safe,
+    office_cancel_reserve_safe,
+    office_change_reserve_status_safe,
+    office_list_message_templates_safe,
+    office_refund_payment_safe,
+    office_search_payments_safe,
+    office_send_notification_safe,
+    office_tag_reserve_safe,
+)
 from shab_mcp.tools.office_reads import (
     office_get_house_safe,
     office_get_notes_safe,
@@ -128,6 +138,16 @@ from shab_mcp.tools.office_reads import (
     office_search_houses_safe,
     office_search_reserves_safe,
     office_search_users_safe,
+)
+from shab_mcp.tools.office_writes import (
+    office_add_note_safe,
+    office_cancel_reserve_safe,
+    office_change_reserve_status_safe,
+    office_list_message_templates_safe,
+    office_refund_payment_safe,
+    office_search_payments_safe,
+    office_send_notification_safe,
+    office_tag_reserve_safe,
 )
 
 INSTRUCTIONS = """\
@@ -1321,6 +1341,99 @@ async def office_auth_status(
 ) -> dict[str, Any]:
     """Check whether staff_token is still valid."""
     return await office_auth_status_safe(staff_token=staff_token)
+
+
+
+@mcp.tool
+async def office_change_reserve_status(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reservation_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+    transition: Annotated[str, Field(description="Target transition name.")],
+    confirm: Annotated[bool, Field(description="Must be true to apply.")] = False,
+) -> dict[str, Any]:
+    """Change reservation status (confirm=true required)."""
+    return await office_change_reserve_status_safe(
+        staff_token=staff_token,
+        reservation_id=reservation_id,
+        transition=transition,
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def office_cancel_reserve(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+    confirm: Annotated[bool, Field(description="Must be true to cancel.")] = False,
+    reason: Annotated[str | None, Field(description="Cancellation reason.")] = None,
+) -> dict[str, Any]:
+    """Cancel a reservation from backoffice."""
+    return await office_cancel_reserve_safe(
+        staff_token=staff_token, reserve_id=reserve_id, confirm=confirm, reason=reason
+    )
+
+
+@mcp.tool
+async def office_tag_reserve(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reservation_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+    tag: Annotated[str, Field(description="Tag name.")],
+) -> dict[str, Any]:
+    """Tag a reservation."""
+    return await office_tag_reserve_safe(
+        staff_token=staff_token, reservation_id=reservation_id, tag=tag
+    )
+
+
+@mcp.tool
+async def office_search_payments(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query.")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search payments."""
+    return await office_search_payments_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_refund_payment(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    payment_id: Annotated[int, Field(description="Payment id.", ge=1)],
+    confirm: Annotated[bool, Field(description="Must be true to refund.")] = False,
+) -> dict[str, Any]:
+    """Refund a payment (confirm=true required)."""
+    return await office_refund_payment_safe(
+        staff_token=staff_token, payment_id=payment_id, confirm=confirm
+    )
+
+
+@mcp.tool
+async def office_list_message_templates(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+) -> dict[str, Any]:
+    """List notification message templates."""
+    return await office_list_message_templates_safe(staff_token=staff_token)
+
+
+@mcp.tool
+async def office_send_notification(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    payload: Annotated[dict[str, Any], Field(description="Notification body as sent by admin SPA.")],
+    confirm: Annotated[bool, Field(description="Must be true to send.")] = False,
+) -> dict[str, Any]:
+    """Send notification/SMS via backoffice."""
+    return await office_send_notification_safe(
+        staff_token=staff_token, payload=payload, confirm=confirm
+    )
+
+
+@mcp.tool
+async def office_add_note(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    payload: Annotated[dict[str, Any], Field(description="Note body (type, id, text, …).")],
+) -> dict[str, Any]:
+    """Add an internal staff note."""
+    return await office_add_note_safe(staff_token=staff_token, payload=payload)
 
 
 if __name__ == "__main__":

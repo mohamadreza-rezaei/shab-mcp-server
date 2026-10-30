@@ -34,13 +34,13 @@ Status values: `planned` | `done` | `skip`.
 
 | Upstream | Tool | Status |
 |----------|------|--------|
-| `POST reserve/change-status` | `office_change_reserve_status` | planned |
-| `POST reserve/{id}/cancel` | `office_cancel_reserve` | planned |
-| `POST reserve/{reservation}/tag` | `office_tag_reserve` | planned |
-| `GET payment` / `POST payment/{id}/refund` | `office_search_payments` / `office_refund_payment` | planned |
-| `GET notification/message-templates` | `office_list_message_templates` | planned |
-| `POST notification` | `office_send_notification` | planned |
-| `POST notes` | `office_add_note` | planned |
+| `POST reserve/change-status` | `office_change_reserve_status` | done |
+| `POST reserve/{id}/cancel` | `office_cancel_reserve` | done |
+| `POST reserve/{reservation}/tag` | `office_tag_reserve` | done |
+| `GET payment` / `POST payment/{id}/refund` | `office_search_payments` / `office_refund_payment` | done |
+| `GET notification/message-templates` | `office_list_message_templates` | done |
+| `POST notification` | `office_send_notification` | done |
+| `POST notes` | `office_add_note` | done |
 
 ## Followups + handoff (1.5)
 

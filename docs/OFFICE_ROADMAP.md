@@ -57,4 +57,4 @@ flowchart LR
 
 ## Status
 
-**1.3 reads shipped**. Next: **1.4** writes.
+**1.4 writes shipped**. Next: **1.5** followups.
