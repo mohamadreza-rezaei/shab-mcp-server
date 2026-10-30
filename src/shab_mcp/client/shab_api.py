@@ -649,3 +649,88 @@ class ShabAPIClient:
         return await self._request(
             "GET", f"reserve/{reserve_id}/guest", access_token=access_token
         )
+
+    # --- host finance / dashboard (v0.8) ---
+
+    async def get_host_dashboard_glance(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "user/host-dashboard/at-a-glance", access_token=access_token
+        )
+
+    async def get_host_dashboard_notices(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "user/host-dashboard/notices", access_token=access_token
+        )
+
+    async def get_host_performance(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "user/host-dashboard/my-performance", access_token=access_token
+        )
+
+    async def get_unanswered_reviews(self, access_token: str) -> Any:
+        return await self._request(
+            "GET",
+            "user/host-dashboard/unanswered-reviews",
+            access_token=access_token,
+        )
+
+    async def get_host_profile(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "user/host-profile", access_token=access_token
+        )
+
+    async def update_host_profile(
+        self, access_token: str, *, payload: dict[str, Any]
+    ) -> Any:
+        return await self._request(
+            "POST", "user/host-profile", json=payload, access_token=access_token
+        )
+
+    async def get_profile_payments(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "profile/payments",
+            params={"page": page},
+            access_token=access_token,
+        )
+
+    async def get_profile_transactions(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "profile/transaction",
+            params={"page": page},
+            access_token=access_token,
+        )
+
+    async def get_profile_checkouts(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "profile/checkouts",
+            params={"page": page},
+            access_token=access_token,
+        )
+
+    async def get_withdraw_requests(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "profile/withdraw-requests", access_token=access_token
+        )
+
+    async def get_settlement_type(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "profile/settlement-type", access_token=access_token
+        )
+
+    async def get_overall_statistics(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "statistics/overall-statistics", access_token=access_token
+        )
+
+    async def get_sale_statistics(self, access_token: str) -> Any:
+        return await self._request(
+            "GET", "statistics/sale-statistics", access_token=access_token
+        )
+
+    async def get_house_statistics(self, access_token: str, house_id: int) -> Any:
+        return await self._request(
+            "GET", f"house/{house_id}/statistics", access_token=access_token
+        )

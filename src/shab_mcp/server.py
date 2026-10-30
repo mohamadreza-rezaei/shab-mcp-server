@@ -42,6 +42,19 @@ from shab_mcp.tools.trips import (
     get_host_profile_safe,
     list_trips_safe,
 )
+from shab_mcp.tools.host_finance import (
+    get_host_dashboard_safe,
+    get_host_statistics_safe,
+    get_house_statistics_safe,
+    get_my_host_profile_safe,
+    get_settlement_type_safe,
+    list_host_checkouts_safe,
+    list_host_payments_safe,
+    list_host_transactions_safe,
+    list_unanswered_reviews_safe,
+    list_withdraw_requests_safe,
+    update_my_host_profile_safe,
+)
 from shab_mcp.tools.host_ops import (
     get_booking_guest_safe,
     get_host_calendar_safe,
@@ -889,6 +902,104 @@ async def get_booking_guest(
 ) -> dict[str, Any]:
     """Get guest contact/info for a host-side reservation."""
     return await get_booking_guest_safe(access_token=access_token, reserve_id=reserve_id)
+
+
+
+
+@mcp.tool
+async def get_host_dashboard(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """Host dashboard: at-a-glance, notices, performance."""
+    return await get_host_dashboard_safe(access_token=access_token)
+
+
+@mcp.tool
+async def list_unanswered_reviews(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """List unanswered host reviews from the dashboard."""
+    return await list_unanswered_reviews_safe(access_token=access_token)
+
+
+@mcp.tool
+async def get_my_host_profile(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """Get the authenticated user's host-profile settings."""
+    return await get_my_host_profile_safe(access_token=access_token)
+
+
+@mcp.tool
+async def update_my_host_profile(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    payload: Annotated[dict[str, Any], Field(description="Host-profile update body.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Update host-profile. Requires confirm=true."""
+    return await update_my_host_profile_safe(
+        access_token=access_token, payload=payload, confirm=confirm
+    )
+
+
+@mcp.tool
+async def list_host_payments(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List host profile payments."""
+    return await list_host_payments_safe(access_token=access_token, page=page)
+
+
+@mcp.tool
+async def list_host_transactions(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List host financial transactions."""
+    return await list_host_transactions_safe(access_token=access_token, page=page)
+
+
+@mcp.tool
+async def list_host_checkouts(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List host checkouts/settlements."""
+    return await list_host_checkouts_safe(access_token=access_token, page=page)
+
+
+@mcp.tool
+async def list_withdraw_requests(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """List host withdraw requests."""
+    return await list_withdraw_requests_safe(access_token=access_token)
+
+
+@mcp.tool
+async def get_settlement_type(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """Get host settlement type settings."""
+    return await get_settlement_type_safe(access_token=access_token)
+
+
+@mcp.tool
+async def get_host_statistics(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+) -> dict[str, Any]:
+    """Overall and sale statistics for the host."""
+    return await get_host_statistics_safe(access_token=access_token)
+
+
+@mcp.tool
+async def get_house_statistics(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+) -> dict[str, Any]:
+    """Statistics for one host house."""
+    return await get_house_statistics_safe(access_token=access_token, house_id=house_id)
 
 
 if __name__ == "__main__":

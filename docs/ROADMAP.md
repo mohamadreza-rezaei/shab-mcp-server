@@ -2,7 +2,7 @@
 
 ## Current baseline
 
-- **Now:** shab-mcp **0.7.0** — through host calendar/pricing/host reserves.
+- **Now:** shab-mcp **0.8.0** — through host calendar/pricing/host reserves.
 - **Upstream:** sandbox `v_1_4` (`/var/www/shab-api/shab/Api/src/routes/sandbox_v_1_4.php`).
 - **Frontend truth:** mainweb → `https://api.shab.ir/api/fa/sandbox/v_1_4`.
 - **Photo / courtyard matching:** MCP returns photo URLs + amenity/`features[]`; OpenWebUI/agent vision judges visuals (no server-side CV in v1).
