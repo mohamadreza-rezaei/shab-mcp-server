@@ -49,7 +49,7 @@ Legend: **done** | **planned** | **skip** (intentional)
 
 | Area | Status |
 |------|--------|
-| Listing wizard store/update steps | planned 0.6 |
+| Listing wizard store/update/my-houses | done (`create_host_listing`, `update_host_listing`, `list_my_houses`, `get_my_house`, `set_house_enabled`) |
 | Calendar / pricing / host reserves | planned 0.7 |
 | Dashboard / finance / host-profile | planned 0.8 |
 

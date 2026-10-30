@@ -1,3 +1,3 @@
 """Shab MCP — Model Context Protocol server for Shab discovery and guest booking."""
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"

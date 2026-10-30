@@ -42,6 +42,13 @@ from shab_mcp.tools.trips import (
     get_host_profile_safe,
     list_trips_safe,
 )
+from shab_mcp.tools.host_listing import (
+    create_host_listing_safe,
+    get_my_house_safe,
+    list_my_houses_safe,
+    set_house_enabled_safe,
+    update_host_listing_safe,
+)
 from shab_mcp.tools.profile import (
     get_user_profile_safe,
     list_bookmarks_safe,
@@ -713,6 +720,81 @@ async def list_discounts(
 ) -> dict[str, Any]:
     """List available discount codes for the guest."""
     return await list_discounts_safe(access_token=access_token)
+
+
+
+
+@mcp.tool
+async def create_host_listing(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    payload: Annotated[
+        dict[str, Any],
+        Field(description="Initial house/store body (type fields as used by mainweb)."),
+    ],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Start a host listing (POST house/store). Requires confirm=true."""
+    return await create_host_listing_safe(
+        access_token=access_token, payload=payload, confirm=confirm
+    )
+
+
+@mcp.tool
+async def update_host_listing(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+    step: Annotated[
+        str,
+        Field(
+            description=(
+                "Wizard step: type, structure, floor, address, location, distances, "
+                "spaces, features, shared, pricing, cancellation, rules, images, "
+                "documents, description, final."
+            )
+        ),
+    ],
+    payload: Annotated[dict[str, Any], Field(description="Step payload (mainweb shape).")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Update one listing wizard step. Requires confirm=true."""
+    return await update_host_listing_safe(
+        access_token=access_token,
+        house_id=house_id,
+        step=step,
+        payload=payload,
+        confirm=confirm,
+    )
+
+
+@mcp.tool
+async def list_my_houses(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List houses owned by the authenticated host."""
+    return await list_my_houses_safe(access_token=access_token, page=page)
+
+
+@mcp.tool
+async def get_my_house(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+) -> dict[str, Any]:
+    """Get host-facing details for one of the user's houses."""
+    return await get_my_house_safe(access_token=access_token, house_id=house_id)
+
+
+@mcp.tool
+async def set_house_enabled(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+    enabled: Annotated[bool, Field(description="True to enable, false to disable/delete.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Enable or disable a host house. Requires confirm=true."""
+    return await set_house_enabled_safe(
+        access_token=access_token, house_id=house_id, enabled=enabled, confirm=confirm
+    )
 
 
 if __name__ == "__main__":

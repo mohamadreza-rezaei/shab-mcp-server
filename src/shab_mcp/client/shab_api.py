@@ -541,3 +541,47 @@ class ShabAPIClient:
 
     async def list_discounts(self, access_token: str) -> Any:
         return await self._request("GET", "user/discount", access_token=access_token)
+
+    # --- host listing (v0.6) ---
+
+    async def store_house(self, access_token: str, *, payload: dict[str, Any]) -> Any:
+        return await self._request("POST", "house/store", json=payload, access_token=access_token)
+
+    async def update_house(
+        self,
+        access_token: str,
+        house_id: int,
+        *,
+        step: str,
+        payload: dict[str, Any],
+    ) -> Any:
+        return await self._request(
+            "POST",
+            f"house/{house_id}/update",
+            params={"step": step},
+            json=payload,
+            access_token=access_token,
+        )
+
+    async def list_my_houses(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "house/my-houses",
+            params={"page": page},
+            access_token=access_token,
+        )
+
+    async def get_user_house(self, access_token: str, house_id: int) -> Any:
+        return await self._request(
+            "GET", f"user/house/{house_id}", access_token=access_token
+        )
+
+    async def enable_house(self, access_token: str, house_id: int) -> Any:
+        return await self._request(
+            "POST", f"house/{house_id}/enable", access_token=access_token
+        )
+
+    async def delete_or_disable_house(self, access_token: str, house_id: int) -> Any:
+        return await self._request(
+            "POST", f"house/{house_id}/delete", access_token=access_token
+        )
