@@ -2,7 +2,7 @@
 
 ## Current baseline
 
-- **Now:** shab-mcp **0.8.0** — through host calendar/pricing/host reserves.
+- **Now:** shab-mcp **1.0.0** — guest discovery→booking→lifecycle→profile + host listing→ops→finance (published).
 - **Upstream:** sandbox `v_1_4` (`/var/www/shab-api/shab/Api/src/routes/sandbox_v_1_4.php`).
 - **Frontend truth:** mainweb → `https://api.shab.ir/api/fa/sandbox/v_1_4`.
 - **Photo / courtyard matching:** MCP returns photo URLs + amenity/`features[]`; OpenWebUI/agent vision judges visuals (no server-side CV in v1).
@@ -54,3 +54,8 @@ flowchart LR
 
 - Chat: REST poll only (no Pusher) through v1.0.
 - Infra image tags: `shab-mcp:0.x.0` / `1.0.0` in ai-lab-pro.
+
+
+## Status
+
+**1.0.0 released** — coverage matrix finalized in `docs/V1_COVERAGE.md`; LiteLLM allowlist synced.

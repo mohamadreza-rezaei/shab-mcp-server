@@ -87,6 +87,7 @@ from shab_mcp.tools.lifecycle import (
     get_eligible_transitions_safe,
     get_review_for_reservation_safe,
     list_cancellation_reasons_safe,
+    reject_booking_safe,
     list_chats_safe,
     list_my_reviews_safe,
     mark_chat_seen_safe,
@@ -548,6 +549,19 @@ async def cancel_booking(
         confirm=confirm,
     )
 
+
+
+
+@mcp.tool
+async def reject_booking(
+    access_token: Annotated[str, Field(description="Bearer token from verify_login_otp.")],
+    reserve_id: Annotated[str, Field(description="Reservation id to reject as guest.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Guest-reject a pending reservation. Requires confirm=true."""
+    return await reject_booking_safe(
+        access_token=access_token, reserve_id=reserve_id, confirm=confirm
+    )
 
 @mcp.tool
 async def get_eligible_transitions(

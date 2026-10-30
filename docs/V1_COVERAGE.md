@@ -1,6 +1,6 @@
 # Shab MCP v1 coverage matrix
 
-Tracks mainweb-used sandbox routes vs MCP tools. Updated each phase; finalized at **1.0.0**.
+Tracks mainweb-used sandbox routes vs MCP tools. **Finalized for release 1.0.0.**
 
 Legend: **done** | **planned** | **skip** (intentional)
 
