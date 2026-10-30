@@ -19,6 +19,13 @@ class Settings(BaseSettings):
     shab_api_origin: str = Field(default="https://shab-mcp.internal", alias="SHAB_API_ORIGIN")
     shab_api_platform: str = Field(default="mcp", alias="SHAB_API_PLATFORM")
     shab_web_base_url: str = Field(default="https://www.shab.ir", alias="SHAB_WEB_BASE_URL")
+    # Callers: OfficeAPIClient, .env.example. Affected: backoffice Client-Id header.
+    # User: Implement the plan as specified.
+    shab_backoffice_client_id: str = Field(
+        default="78fse4gc-q2ed-8fnh-sewq-bgnc8rtwjaer",
+        alias="SHAB_BACKOFFICE_CLIENT_ID",
+    )
+    shab_mcp_surface: str = Field(default="all", alias="SHAB_MCP_SURFACE")
 
     shab_connect_timeout: float = Field(default=5.0, alias="SHAB_CONNECT_TIMEOUT")
     shab_read_timeout: float = Field(default=20.0, alias="SHAB_READ_TIMEOUT")
@@ -32,6 +39,11 @@ class Settings(BaseSettings):
     def api_prefix(self) -> str:
         base = self.shab_api_base_url.rstrip("/")
         return f"{base}/api/{self.shab_api_lang}/sandbox/{self.shab_api_version}"
+
+    @property
+    def backoffice_prefix(self) -> str:
+        base = self.shab_api_base_url.rstrip("/")
+        return f"{base}/api/{self.shab_api_lang}/{self.shab_api_version}/backoffice"
 
 
 @lru_cache

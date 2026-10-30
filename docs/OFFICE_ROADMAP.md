@@ -57,4 +57,4 @@ flowchart LR
 
 ## Status
 
-**1.1 docs shipped** — inventory + AUTH office section + mind map. Next: **1.2** staff auth.
+**1.2 staff auth shipped** — `OfficeAPIClient` + office_login/logout/bootstrap/auth_status. Next: **1.3** reads.

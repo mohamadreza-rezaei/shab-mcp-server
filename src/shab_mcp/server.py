@@ -94,6 +94,13 @@ from shab_mcp.tools.lifecycle import (
     send_chat_message_safe,
     submit_review_safe,
 )
+# Callers: FastMCP registry. Affected: office auth tools. User: Implement the plan as specified.
+from shab_mcp.tools.office_auth import (
+    office_auth_status_safe,
+    office_bootstrap_safe,
+    office_login_safe,
+    office_logout_safe,
+)
 
 INSTRUCTIONS = """\
 Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
@@ -122,6 +129,10 @@ Rules:
 - Prefer Persian place names (e.g. رامسر, تهران).
 Guest lifecycle: cancel_booking, chat REST, submit_review, change_booking_status (confirm=true).
 - Never invent an access_token; never complete bank/IPG card payment inside tools.
+
+Office / staff (Call Center, Host & Guest) — separate LiteLLM allowlist shab_office_mcp:
+- office_login(mobile, password) → staff_token; pass to office_* tools.
+- Never expose office_* on public guest chatbots.
 """
 
 mcp = FastMCP(
@@ -1014,6 +1025,42 @@ async def get_house_statistics(
 ) -> dict[str, Any]:
     """Statistics for one host house."""
     return await get_house_statistics_safe(access_token=access_token, house_id=house_id)
+
+
+# --- Office / staff (backoffice) ---
+
+
+@mcp.tool
+async def office_login(
+    mobile: Annotated[str, Field(description="Staff mobile 09xxxxxxxxx.")],
+    password: Annotated[str, Field(description="Staff backoffice password.")],
+) -> dict[str, Any]:
+    """Staff login to Shab backoffice. Returns staff_token for office_* tools."""
+    return await office_login_safe(mobile=mobile, password=password)
+
+
+@mcp.tool
+async def office_logout(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+) -> dict[str, Any]:
+    """Revoke staff backoffice session."""
+    return await office_logout_safe(staff_token=staff_token)
+
+
+@mcp.tool
+async def office_bootstrap(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+) -> dict[str, Any]:
+    """Load backoffice bootstrap (user_info + permissions)."""
+    return await office_bootstrap_safe(staff_token=staff_token)
+
+
+@mcp.tool
+async def office_auth_status(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+) -> dict[str, Any]:
+    """Check whether staff_token is still valid."""
+    return await office_auth_status_safe(staff_token=staff_token)
 
 
 if __name__ == "__main__":

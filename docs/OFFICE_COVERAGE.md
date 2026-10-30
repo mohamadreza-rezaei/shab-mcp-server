@@ -9,10 +9,10 @@ Status values: `planned` | `done` | `skip`.
 
 | Upstream | Tool | Status |
 |----------|------|--------|
-| `POST auth/login` | `office_login` | planned |
-| `POST auth/logout` | `office_logout` | planned |
-| `GET bootstrap` | `office_bootstrap` | planned |
-| — | `office_auth_status` | planned |
+| `POST auth/login` | `office_login` | done |
+| `POST auth/logout` | `office_logout` | done |
+| `GET bootstrap` | `office_bootstrap` | done |
+| — | `office_auth_status` | done |
 
 ## Reads (1.3)
 
