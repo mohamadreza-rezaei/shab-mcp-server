@@ -101,6 +101,34 @@ from shab_mcp.tools.office_auth import (
     office_login_safe,
     office_logout_safe,
 )
+from shab_mcp.tools.office_reads import (
+    office_get_house_safe,
+    office_get_notes_safe,
+    office_get_reserve_chat_safe,
+    office_get_reserve_safe,
+    office_get_reserve_transitions_safe,
+    office_get_user_safe,
+    office_get_user_stats_safe,
+    office_list_chats_safe,
+    office_list_notes_safe,
+    office_search_houses_safe,
+    office_search_reserves_safe,
+    office_search_users_safe,
+)
+from shab_mcp.tools.office_reads import (
+    office_get_house_safe,
+    office_get_notes_safe,
+    office_get_reserve_chat_safe,
+    office_get_reserve_safe,
+    office_get_reserve_transitions_safe,
+    office_get_user_safe,
+    office_get_user_stats_safe,
+    office_list_chats_safe,
+    office_list_notes_safe,
+    office_search_houses_safe,
+    office_search_reserves_safe,
+    office_search_users_safe,
+)
 
 INSTRUCTIONS = """\
 Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
@@ -1037,6 +1065,238 @@ async def office_login(
 ) -> dict[str, Any]:
     """Staff login to Shab backoffice. Returns staff_token for office_* tools."""
     return await office_login_safe(mobile=mobile, password=password)
+
+
+@mcp.tool
+async def office_search_users(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query (mobile, name, id).")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search backoffice users grid."""
+    return await office_search_users_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_get_user(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    user_id: Annotated[int, Field(description="User id.", ge=1)],
+) -> dict[str, Any]:
+    """Get one backoffice user."""
+    return await office_get_user_safe(staff_token=staff_token, user_id=user_id)
+
+
+@mcp.tool
+async def office_get_user_stats(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    user_id: Annotated[int, Field(description="User id.", ge=1)],
+) -> dict[str, Any]:
+    """User statistics from backoffice."""
+    return await office_get_user_stats_safe(staff_token=staff_token, user_id=user_id)
+
+
+@mcp.tool
+async def office_search_reserves(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query.")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search reservations in backoffice."""
+    return await office_search_reserves_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_get_reserve(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+) -> dict[str, Any]:
+    """Get reservation detail."""
+    return await office_get_reserve_safe(staff_token=staff_token, reserve_id=reserve_id)
+
+
+@mcp.tool
+async def office_get_reserve_chat(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+) -> dict[str, Any]:
+    """Get chat thread for a reservation."""
+    return await office_get_reserve_chat_safe(staff_token=staff_token, reserve_id=reserve_id)
+
+
+@mcp.tool
+async def office_get_reserve_transitions(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+) -> dict[str, Any]:
+    """Eligible status transitions for a reservation."""
+    return await office_get_reserve_transitions_safe(
+        staff_token=staff_token, reserve_id=reserve_id
+    )
+
+
+@mcp.tool
+async def office_search_houses(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query.")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search houses in backoffice."""
+    return await office_search_houses_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_get_house(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+) -> dict[str, Any]:
+    """Get house detail from backoffice."""
+    return await office_get_house_safe(staff_token=staff_token, house_id=house_id)
+
+
+@mcp.tool
+async def office_list_chats(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List backoffice chats."""
+    return await office_list_chats_safe(staff_token=staff_token, page=page)
+
+
+@mcp.tool
+async def office_list_notes(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List staff notes."""
+    return await office_list_notes_safe(staff_token=staff_token, page=page)
+
+
+@mcp.tool
+async def office_get_notes(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    note_type: Annotated[str, Field(description="Model type, e.g. reserve, user, house.")],
+    model_id: Annotated[int, Field(description="Model id.", ge=1)],
+) -> dict[str, Any]:
+    """Get notes for a specific model."""
+    return await office_get_notes_safe(
+        staff_token=staff_token, note_type=note_type, model_id=model_id
+    )
+
+
+@mcp.tool
+async def office_search_users(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query (mobile, name, id).")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search backoffice users grid."""
+    return await office_search_users_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_get_user(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    user_id: Annotated[int, Field(description="User id.", ge=1)],
+) -> dict[str, Any]:
+    """Get one backoffice user."""
+    return await office_get_user_safe(staff_token=staff_token, user_id=user_id)
+
+
+@mcp.tool
+async def office_get_user_stats(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    user_id: Annotated[int, Field(description="User id.", ge=1)],
+) -> dict[str, Any]:
+    """User statistics from backoffice."""
+    return await office_get_user_stats_safe(staff_token=staff_token, user_id=user_id)
+
+
+@mcp.tool
+async def office_search_reserves(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query.")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search reservations in backoffice."""
+    return await office_search_reserves_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_get_reserve(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+) -> dict[str, Any]:
+    """Get reservation detail."""
+    return await office_get_reserve_safe(staff_token=staff_token, reserve_id=reserve_id)
+
+
+@mcp.tool
+async def office_get_reserve_chat(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+) -> dict[str, Any]:
+    """Get chat thread for a reservation."""
+    return await office_get_reserve_chat_safe(staff_token=staff_token, reserve_id=reserve_id)
+
+
+@mcp.tool
+async def office_get_reserve_transitions(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    reserve_id: Annotated[int, Field(description="Reservation id.", ge=1)],
+) -> dict[str, Any]:
+    """Eligible status transitions for a reservation."""
+    return await office_get_reserve_transitions_safe(
+        staff_token=staff_token, reserve_id=reserve_id
+    )
+
+
+@mcp.tool
+async def office_search_houses(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    q: Annotated[str | None, Field(description="Search query.")] = None,
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """Search houses in backoffice."""
+    return await office_search_houses_safe(staff_token=staff_token, q=q, page=page)
+
+
+@mcp.tool
+async def office_get_house(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    house_id: Annotated[int, Field(description="House id.", ge=1)],
+) -> dict[str, Any]:
+    """Get house detail from backoffice."""
+    return await office_get_house_safe(staff_token=staff_token, house_id=house_id)
+
+
+@mcp.tool
+async def office_list_chats(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List backoffice chats."""
+    return await office_list_chats_safe(staff_token=staff_token, page=page)
+
+
+@mcp.tool
+async def office_list_notes(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List staff notes."""
+    return await office_list_notes_safe(staff_token=staff_token, page=page)
+
+
+@mcp.tool
+async def office_get_notes(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    note_type: Annotated[str, Field(description="Model type, e.g. reserve, user, house.")],
+    model_id: Annotated[int, Field(description="Model id.", ge=1)],
+) -> dict[str, Any]:
+    """Get notes for a specific model."""
+    return await office_get_notes_safe(
+        staff_token=staff_token, note_type=note_type, model_id=model_id
+    )
 
 
 @mcp.tool

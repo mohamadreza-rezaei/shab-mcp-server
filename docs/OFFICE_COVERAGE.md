@@ -18,17 +18,17 @@ Status values: `planned` | `done` | `skip`.
 
 | Upstream | Tool | Status |
 |----------|------|--------|
-| `GET user` | `office_search_users` | planned |
-| `GET user/{id}` | `office_get_user` | planned |
-| `GET user/{id}/statistic` | `office_get_user_stats` | planned |
-| `GET reserve` | `office_search_reserves` | planned |
-| `GET reserve/{id}` | `office_get_reserve` | planned |
-| `GET reserve/{id}/chat` | `office_get_reserve_chat` | planned |
-| `GET reserve/{id}/eligible-transitions` | `office_get_reserve_transitions` | planned |
-| `GET house` | `office_search_houses` | planned |
-| `GET house/{id}` | `office_get_house` | planned |
-| `GET chat` | `office_list_chats` | planned |
-| `GET notes` / `GET notes/{type}/{id}` | `office_list_notes` / `office_get_notes` | planned |
+| `GET user` | `office_search_users` | done |
+| `GET user/{id}` | `office_get_user` | done |
+| `GET user/{id}/statistic` | `office_get_user_stats` | done |
+| `GET reserve` | `office_search_reserves` | done |
+| `GET reserve/{id}` | `office_get_reserve` | done |
+| `GET reserve/{id}/chat` | `office_get_reserve_chat` | done |
+| `GET reserve/{id}/eligible-transitions` | `office_get_reserve_transitions` | done |
+| `GET house` | `office_search_houses` | done |
+| `GET house/{id}` | `office_get_house` | done |
+| `GET chat` | `office_list_chats` | done |
+| `GET notes` / `GET notes/{type}/{id}` | `office_list_notes` / `office_get_notes` | done |
 
 ## Writes (1.4)
 
