@@ -8,6 +8,7 @@ import httpx
 from shab_mcp import __version__
 from shab_mcp.config import Settings, get_settings
 from shab_mcp.errors import (
+    ShabAuthenticationError,
     ShabNotFoundError,
     ShabRateLimitedError,
     ShabTimeoutError,
@@ -22,17 +23,19 @@ RETRYABLE_STATUS = {408, 429, 500, 502, 503, 504}
 
 
 class ShabAPIClient:
-    """Async HTTP client for Shab sandbox v1.4 public read endpoints."""
+    """Async HTTP client for Shab sandbox v1.4 (public + authenticated guest flows)."""
 
     def __init__(
         self,
         settings: Settings | None = None,
         *,
         client: httpx.AsyncClient | None = None,
+        access_token: str | None = None,
     ) -> None:
         self.settings = settings or get_settings()
         self._client = client
         self._owns_client = client is None
+        self.access_token = access_token
 
     async def __aenter__(self) -> ShabAPIClient:
         if self._client is None:
@@ -47,6 +50,8 @@ class ShabAPIClient:
                 headers={
                     "User-Agent": f"shab-mcp/{__version__}",
                     "Accept": "application/json",
+                    "Origin": self.settings.shab_api_origin,
+                    "Platform": self.settings.shab_api_platform,
                 },
                 follow_redirects=True,
             )
@@ -66,20 +71,35 @@ class ShabAPIClient:
     def _url(self, path: str) -> str:
         return f"{self.settings.api_prefix}/{path.lstrip('/')}"
 
+    def _auth_headers(self, access_token: str | None = None) -> dict[str, str]:
+        token = access_token if access_token is not None else self.access_token
+        if not token:
+            return {}
+        return {"Authorization": f"Bearer {token}"}
+
     async def _request(
         self,
         method: str,
         path: str,
         *,
         params: dict[str, Any] | list[tuple[str, Any]] | None = None,
+        json: dict[str, Any] | None = None,
+        access_token: str | None = None,
     ) -> Any:
         url = self._url(path)
+        headers = self._auth_headers(access_token)
         attempts = self.settings.shab_max_retries + 1
         last_exc: Exception | None = None
 
         for attempt in range(attempts):
             try:
-                response = await self.client.request(method, url, params=params)
+                response = await self.client.request(
+                    method,
+                    url,
+                    params=params,
+                    json=json,
+                    headers=headers or None,
+                )
             except httpx.TimeoutException as exc:
                 last_exc = ShabTimeoutError("Shab API request timed out. Please retry later.")
                 if attempt + 1 >= attempts:
@@ -92,6 +112,10 @@ class ShabAPIClient:
                 if attempt + 1 >= attempts:
                     raise last_exc from exc
                 continue
+
+            # Never retry auth failures.
+            if response.status_code in {401, 403}:
+                return self._parse_response(response)
 
             if response.status_code in RETRYABLE_STATUS and attempt + 1 < attempts:
                 logger.warning(
@@ -117,6 +141,11 @@ class ShabAPIClient:
                 f"Shab API returned non-JSON response (HTTP {status})."
             ) from exc
 
+        if status in {401, 403}:
+            raise ShabAuthenticationError(
+                "Shab authentication failed. Request a new OTP or pass a valid access_token.",
+                details=(payload.get("meta") if isinstance(payload, dict) else payload),
+            )
         if status == 404:
             raise ShabNotFoundError("Requested Shab resource was not found.")
         if status == 429:
@@ -143,6 +172,11 @@ class ShabAPIClient:
             meta = payload.get("meta") or {}
             meta_status = meta.get("status")
             if isinstance(meta_status, int) and meta_status >= 400:
+                if meta_status in {401, 403}:
+                    raise ShabAuthenticationError(
+                        "Shab authentication failed. Request a new OTP or pass a valid access_token.",
+                        details=meta.get("messages"),
+                    )
                 if meta_status == 404:
                     raise ShabNotFoundError("Requested Shab resource was not found.")
                 if meta_status == 422:
@@ -157,11 +191,22 @@ class ShabAPIClient:
             return payload.get("data")
         return payload
 
+    # --- public read ---
+
     async def search_houses(self, params: list[tuple[str, Any]]) -> Any:
         return await self._request("GET", "house/search", params=params)
 
+    async def get_search_filters(self) -> Any:
+        return await self._request("GET", "search/filters")
+
     async def get_house(self, house_id: int) -> Any:
         return await self._request("GET", f"house/{house_id}")
+
+    async def get_house_photos(self, house_id: int) -> Any:
+        return await self._request("GET", f"house/{house_id}/photos")
+
+    async def get_house_reviews(self, house_id: int, *, page: int = 1) -> Any:
+        return await self._request("GET", f"house/{house_id}/reviews", params={"page": page})
 
     async def get_house_calendar(
         self,
@@ -183,20 +228,120 @@ class ShabAPIClient:
         checkin: str,
         checkout: str,
         guests_count: int,
+        discount_code: str | None = None,
     ) -> Any:
-        return await self._request(
-            "GET",
-            "reserve/proforma",
-            params={
-                "house_id": house_id,
-                "checkin": checkin,
-                "checkout": checkout,
-                "guests_count": guests_count,
-            },
-        )
+        params: dict[str, Any] = {
+            "house_id": house_id,
+            "checkin": checkin,
+            "checkout": checkout,
+            "guests_count": guests_count,
+        }
+        if discount_code:
+            params["discount_code"] = discount_code
+        return await self._request("GET", "reserve/proforma", params=params)
 
     async def house_suggestions(self, phrase: str) -> Any:
         return await self._request("GET", "house/suggestions", params={"phrase": phrase})
 
     async def region_suggestions(self, phrase: str) -> Any:
         return await self._request("GET", "region/suggestions", params={"phrase": phrase})
+
+    async def get_public_profile(self, user_uid: str) -> Any:
+        return await self._request("GET", f"profile/{user_uid}")
+
+    # --- auth ---
+
+    async def login_otp(self, mobile: str) -> Any:
+        return await self._request("POST", "auth/login-otp", json={"mobile": mobile})
+
+    async def verify_otp(self, mobile: str, code: str) -> Any:
+        return await self._request(
+            "POST",
+            "auth/verify-otp",
+            json={"mobile": mobile, "code": code},
+        )
+
+    async def logout(self, access_token: str) -> Any:
+        return await self._request("POST", "auth/logout", access_token=access_token)
+
+    async def get_current_user(self, access_token: str) -> Any:
+        return await self._request("GET", "user", access_token=access_token)
+
+    # --- booking / trips ---
+
+    async def create_reserve(
+        self,
+        access_token: str,
+        *,
+        house_id: int,
+        checkin: str,
+        checkout: str,
+        guests_count: int,
+    ) -> Any:
+        return await self._request(
+            "POST",
+            "reserve",
+            json={
+                "house_id": house_id,
+                "checkin": checkin,
+                "checkout": checkout,
+                "guests_count": guests_count,
+            },
+            access_token=access_token,
+        )
+
+    async def calculate_invoice(
+        self,
+        access_token: str,
+        *,
+        invoice_id: str,
+        discount_code: str | None = None,
+        use_credit: bool = False,
+        prepay_total_fee: bool = False,
+    ) -> Any:
+        body: dict[str, Any] = {
+            "invoice_id": invoice_id,
+            "use_credit": use_credit,
+            "prepay_total_fee": prepay_total_fee,
+        }
+        if discount_code:
+            body["discount_code"] = discount_code
+        return await self._request(
+            "POST",
+            "invoice/calculate",
+            json=body,
+            access_token=access_token,
+        )
+
+    async def get_invoice(self, access_token: str, invoice_id: str) -> Any:
+        return await self._request("GET", f"invoice/{invoice_id}/show", access_token=access_token)
+
+    async def get_payment_gateways(self, access_token: str, reservation_id: str) -> Any:
+        return await self._request(
+            "GET",
+            "payment/gateways",
+            params={"reservation": reservation_id},
+            access_token=access_token,
+        )
+
+    async def list_reserves(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "reserve",
+            params={"page": page, "new": "true"},
+            access_token=access_token,
+        )
+
+    async def list_trips(self, access_token: str, *, page: int = 1) -> Any:
+        return await self._request(
+            "GET",
+            "reserve/trips",
+            params={"page": page},
+            access_token=access_token,
+        )
+
+    async def get_reserve(self, access_token: str, reserve_id: str) -> Any:
+        return await self._request("GET", f"reserve/{reserve_id}", access_token=access_token)
+
+    async def get_reserve_host(self, access_token: str, reserve_id: str) -> Any:
+        return await self._request("GET", f"reserve/{reserve_id}/host", access_token=access_token)

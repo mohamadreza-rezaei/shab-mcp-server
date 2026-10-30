@@ -1,0 +1,7 @@
+{
+  "records": [
+    {"rate": 5, "comment": "عالی بود", "created_at": "2025-01-01", "guest": {"name": "علی"}},
+    {"rate": 4, "comment": "خوب", "created_at": "2025-02-01", "guest": {"name": "سارا"}}
+  ],
+  "pagination": {"current_page": 1, "total": 2}
+}

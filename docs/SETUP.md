@@ -166,9 +166,23 @@ mcp_servers:
     available_on_public_internet: true
     allowed_tools:
       - search_destinations
+      - list_search_filters
       - search_accommodations
       - get_accommodation
+      - get_accommodation_photos
+      - get_accommodation_reviews
       - check_availability
+      - request_login_otp
+      - verify_login_otp
+      - get_auth_status
+      - logout
+      - create_booking
+      - calculate_invoice
+      - get_payment_link
+      - list_trips
+      - get_booking
+      - get_booking_host
+      - get_host_profile
 ```
 
 Notes:
@@ -279,7 +293,7 @@ Expect tools (names may be prefixed with `shab_mcp-` at the gateway):
 | `get_accommodation` | Known house id → detail |
 | `check_availability` | House id + check-in/out (Gregorian `YYYY-MM-DD`) → calendar + Toman quote |
 
-No booking / payment tools exist by design.
+v0.2 adds OTP auth + booking up to payment URL handoff (no card/IPG in MCP). See AUTH.md.
 
 ---
 

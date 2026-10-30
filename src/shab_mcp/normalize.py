@@ -163,20 +163,228 @@ def normalize_calendar(data: dict[str, Any]) -> list[dict[str, Any]]:
     return nights
 
 
-def normalize_proforma(data: dict[str, Any]) -> dict[str, Any]:
+def normalize_proforma(data: dict[str, Any], *, prefer_discount: bool = False) -> dict[str, Any]:
     finalized = data.get("finalized_price") or {}
     details = data.get("details_of_price") or {}
+    if prefer_discount:
+        total = money_amount(
+            finalized.get("with_discount_code") or finalized.get("without_discount_code")
+        )
+    else:
+        total = money_amount(
+            finalized.get("without_discount_code") or finalized.get("with_discount_code")
+        )
     return {
         "is_instant": bool(data.get("is_instant")),
-        "total_price": money_amount(
-            finalized.get("without_discount_code") or finalized.get("with_discount_code")
-        ),
+        "total_price": total,
         "prepayment": money_amount(finalized.get("prepayment")),
         "currency": "Toman",
         "base_price": money_amount(details.get("base")),
         "extra_guests_fee": money_amount((details.get("extra_person") or {}).get("amount")),
         "extra_guests_count": (details.get("extra_person") or {}).get("count"),
     }
+
+
+def normalize_photos(data: Any, *, limit: int = 24) -> list[dict[str, Any]]:
+    photos: list[dict[str, Any]] = []
+    records = data
+    if isinstance(data, dict):
+        records = data.get("records") or data.get("photos") or data.get("pictures") or data
+    if not isinstance(records, list):
+        return photos
+    for pic in records[:limit]:
+        if not isinstance(pic, dict):
+            continue
+        url = (
+            pic.get("absolute_url")
+            or pic.get("thumbnail_absolute_url")
+            or pic.get("url")
+            or pic.get("path")
+        )
+        if not url:
+            continue
+        photos.append(
+            {
+                "url": url,
+                "thumbnail_url": pic.get("thumbnail_absolute_url") or pic.get("thumbnail_url"),
+                "caption": clip_text(pic.get("caption") or pic.get("title"), limit=120),
+            }
+        )
+    return photos
+
+
+def normalize_reviews(data: Any, *, limit: int = 10) -> dict[str, Any]:
+    records = data
+    pagination: dict[str, Any] = {}
+    if isinstance(data, dict):
+        records = data.get("records") or data.get("reviews") or data.get("data") or []
+        pagination = data.get("pagination") or {}
+    items: list[dict[str, Any]] = []
+    if isinstance(records, list):
+        for rev in records[:limit]:
+            if not isinstance(rev, dict):
+                continue
+            guest = rev.get("guest") or rev.get("user") or {}
+            items.append(
+                {
+                    "rating": rev.get("rate") or rev.get("rating") or rev.get("rank"),
+                    "comment": clip_text(
+                        rev.get("comment") or rev.get("body") or rev.get("text"), limit=500
+                    ),
+                    "created_at": rev.get("created_at") or rev.get("date"),
+                    "guest_name": guest.get("name") if isinstance(guest, dict) else None,
+                }
+            )
+    return {
+        "reviews": items,
+        "page": pagination.get("current_page"),
+        "total": pagination.get("total"),
+    }
+
+
+def normalize_search_filters(data: Any) -> dict[str, Any]:
+    """Slim amenity/feature filter catalog for agents."""
+    if not isinstance(data, dict):
+        return {"amenities": [], "raw_keys": []}
+    amenities: list[dict[str, Any]] = []
+    candidates: list[Any] = []
+    for key in ("features", "amenities", "feature_categories", "filters"):
+        val = data.get(key)
+        if val is not None:
+            candidates.append(val)
+    if isinstance(data.get("filters"), dict):
+        for key in ("features", "amenities"):
+            if data["filters"].get(key) is not None:
+                candidates.append(data["filters"][key])
+
+    def add_feature(item: dict[str, Any]) -> None:
+        code = item.get("name") or item.get("code") or item.get("slug") or item.get("id")
+        label = item.get("feature_label") or item.get("label") or item.get("title") or item.get("fa")
+        if code is None and label is None:
+            return
+        amenities.append({"code": str(code) if code is not None else None, "label": label})
+
+    for block in candidates:
+        if isinstance(block, list):
+            for item in block:
+                if isinstance(item, dict):
+                    add_feature(item)
+        elif isinstance(block, dict):
+            for items in block.values():
+                if isinstance(items, list):
+                    for item in items:
+                        if isinstance(item, dict):
+                            add_feature(item)
+                elif isinstance(items, dict):
+                    add_feature(items)
+
+    seen: set[str] = set()
+    unique: list[dict[str, Any]] = []
+    for a in amenities:
+        key = str(a.get("code") or a.get("label") or "")
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        unique.append(a)
+        if len(unique) >= 80:
+            break
+    return {"amenities": unique, "hint": "Pass amenity codes as amenities[] on search_accommodations."}
+
+
+def normalize_user_summary(data: Any) -> dict[str, Any]:
+    if not isinstance(data, dict):
+        return {}
+    user = data.get("user") if isinstance(data.get("user"), dict) else data
+    return {
+        "id": user.get("id") or user.get("uid") or user.get("public_uid"),
+        "name": user.get("name") or user.get("full_name"),
+        "mobile": user.get("mobile"),
+    }
+
+
+def normalize_booking_summary(data: Any) -> dict[str, Any]:
+    if not isinstance(data, dict):
+        return {}
+    house = data.get("house") or {}
+    return {
+        "reserve_id": data.get("reserve_id") or data.get("id") or data.get("tiny_id"),
+        "invoice_id": data.get("invoice_id") or (data.get("invoice") or {}).get("id"),
+        "status": data.get("last_state") or data.get("status") or data.get("state"),
+        "is_instant": bool(data.get("is_instant")),
+        "check_in": data.get("checkin") or data.get("check_in"),
+        "check_out": data.get("checkout") or data.get("check_out"),
+        "guests": data.get("guests_count") or data.get("guests"),
+        "house": {
+            "id": house.get("id") if isinstance(house, dict) else data.get("house_id"),
+            "title": house.get("title") if isinstance(house, dict) else None,
+        },
+        "total_price": money_amount(
+            data.get("total_price")
+            or data.get("price")
+            or (data.get("invoice") or {}).get("prepayment")
+        ),
+        "currency": "Toman",
+    }
+
+
+def normalize_host_profile(data: Any) -> dict[str, Any]:
+    if not isinstance(data, dict):
+        return {}
+    return {
+        "id": data.get("id") or data.get("uid") or data.get("public_uid"),
+        "name": data.get("name") or data.get("full_name"),
+        "is_verified_host": bool(data.get("is_verified_host") or data.get("is_host")),
+        "about": clip_text(data.get("about_me") or data.get("about"), limit=600),
+        "response_rate": data.get("response_rate") or data.get("host_response_rate"),
+        "rating": data.get("rate") or data.get("rating"),
+    }
+
+
+def normalize_host_contact(data: Any) -> dict[str, Any]:
+    if not isinstance(data, dict):
+        return {}
+    host = data.get("host") if isinstance(data.get("host"), dict) else data
+    return {
+        "name": host.get("name"),
+        "mobile": host.get("mobile") or host.get("phone"),
+        "id": host.get("id") or host.get("uid") or host.get("public_uid"),
+    }
+
+
+def normalize_invoice_calculate(data: Any) -> dict[str, Any]:
+    if not isinstance(data, dict):
+        return {}
+    invoice = data.get("invoice") if isinstance(data.get("invoice"), dict) else data
+    return {
+        "invoice_id": invoice.get("id") or invoice.get("tiny_id") or data.get("invoice_id"),
+        "prepayment": money_amount(invoice.get("prepayment") or data.get("prepayment")),
+        "total": money_amount(invoice.get("total") or data.get("total")),
+        "discount_applied": bool(
+            data.get("discount_applied")
+            or invoice.get("discount_code")
+            or data.get("discount_code")
+        ),
+        "currency": "Toman",
+    }
+
+
+def normalize_gateways(data: Any) -> list[dict[str, Any]]:
+    records = data
+    if isinstance(data, dict):
+        records = data.get("records") or data.get("gateways") or data.get("data") or []
+    out: list[dict[str, Any]] = []
+    if not isinstance(records, list):
+        return out
+    for g in records:
+        if not isinstance(g, dict):
+            continue
+        out.append(
+            {
+                "id": g.get("id"),
+                "name": g.get("name") or g.get("title") or g.get("label"),
+            }
+        )
+    return out
 
 
 def normalize_destinations(payload: Any) -> list[dict[str, Any]]:

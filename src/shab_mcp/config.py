@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     shab_api_base_url: str = Field(default="https://api.shab.ir", alias="SHAB_API_BASE_URL")
     shab_api_lang: str = Field(default="fa", alias="SHAB_API_LANG")
     shab_api_version: str = Field(default="v_1_4", alias="SHAB_API_VERSION")
+    # Non-stateful Origin so OTP verify returns Sanctum access_token (not SPA cookie session).
+    shab_api_origin: str = Field(default="https://mcp.shab.systems", alias="SHAB_API_ORIGIN")
+    shab_api_platform: str = Field(default="mcp", alias="SHAB_API_PLATFORM")
+    shab_web_base_url: str = Field(default="https://www.shab.ir", alias="SHAB_WEB_BASE_URL")
 
     shab_connect_timeout: float = Field(default=5.0, alias="SHAB_CONNECT_TIMEOUT")
     shab_read_timeout: float = Field(default=20.0, alias="SHAB_READ_TIMEOUT")

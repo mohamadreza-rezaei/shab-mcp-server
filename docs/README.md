@@ -1,6 +1,6 @@
 # Shab MCP docs
 
-Private, read-only MCP for [Shab](https://shab.ir) accommodation APIs. Agents talk to **LiteLLM**, LiteLLM talks to **shab-mcp** (Docker), shab-mcp talks to **api.shab.ir**.
+Private MCP for [Shab](https://shab.ir) accommodation APIs (discovery + guest booking). Agents talk to **LiteLLM**, LiteLLM talks to **shab-mcp** (Docker), shab-mcp talks to **api.shab.ir**.
 
 ```
 Cursor / Claude / OpenClaw / OpenWebUI / …
@@ -22,6 +22,8 @@ Cursor / Claude / OpenClaw / OpenWebUI / …
 |-----|-------------|
 | [SETUP.md](./SETUP.md) | Clone on server, Lab Pro compose, LiteLLM config, health checks, pytest |
 | [CLIENTS.md](./CLIENTS.md) | Add Shab MCP to Cursor, Claude Code, OpenClaw, VS Code Copilot, Hermes |
+| [AUTH.md](./AUTH.md) | OTP auth + access_token + payment handoff |
+| [AUTH.md](./AUTH.md) | OTP auth + access_token + payment handoff |
 | [ساخت MCP سفارشی.md](./ساخت%20MCP%20سفارشی.md) | Design notes / architecture (Persian) |
 
 ## Quick cheatsheet
@@ -51,7 +53,7 @@ Cursor / Claude / OpenClaw / OpenWebUI / …
 x-litellm-api-key: Bearer sk-<virtual-key>
 ```
 
-**Tools:** `search_destinations` · `search_accommodations` · `get_accommodation` · `check_availability`
+**Tools (v0.2):** discovery (search/photos/reviews) · OTP auth · create_booking · invoice/discount · payment_url · trips/host
 
 **Dates:** Gregorian `YYYY-MM-DD` in · Jalali / unix day out to Shab API · prices in **Toman**.
 
@@ -68,4 +70,4 @@ curl -sS "$LITELLM_URL/shab_mcp/mcp" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
-You should see the four Shab tools. Full steps → [SETUP.md](./SETUP.md).
+You should see the v0.2 Shab tools. Full steps → [SETUP.md](./SETUP.md).

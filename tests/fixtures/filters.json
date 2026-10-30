@@ -1,0 +1,6 @@
+{
+  "features": [
+    {"name": "elevator", "feature_label": "آسانسور"},
+    {"name": "parking", "feature_label": "پارکینگ"}
+  ]
+}

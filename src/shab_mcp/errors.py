@@ -44,6 +44,10 @@ class ShabUpstreamError(ShabError):
     code = "SHAB_UPSTREAM_ERROR"
 
 
+class ShabAuthenticationError(ShabError):
+    code = "SHAB_AUTHENTICATION_ERROR"
+
+
 def tool_error_payload(exc: Exception) -> dict[str, Any]:
     if isinstance(exc, ShabError):
         return exc.to_dict()

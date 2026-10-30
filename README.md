@@ -1,6 +1,6 @@
 # shab-mcp
 
-Private, read-only [Model Context Protocol](https://modelcontextprotocol.io/) server for [Shab](https://shab.ir) accommodation APIs (`sandbox` v1.4).
+Private [Model Context Protocol](https://modelcontextprotocol.io/) server for [Shab](https://shab.ir) accommodation APIs (`sandbox` v1.4) — discovery + guest booking assistant.
 
 Designed to run inside **AI Lab Pro** and be consumed through **LiteLLM’s MCP gateway**.
 
@@ -12,16 +12,26 @@ Designed to run inside **AI Lab Pro** and be consumed through **LiteLLM’s MCP 
 | [docs/SETUP.md](docs/SETUP.md) | Server deploy, Lab Pro compose, LiteLLM MCP, testing |
 | [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor, Claude Code, OpenClaw, Copilot, Hermes, OpenWebUI |
 
-## Tools (v0.1)
+## Tools (v0.2)
 
 | Tool | Purpose |
 |------|---------|
 | `search_destinations` | Resolve Persian place names |
-| `search_accommodations` | Search listings |
+| `list_search_filters` | Amenity/feature codes for search |
+| `search_accommodations` | Search listings (rooms, amenities, sort) |
 | `get_accommodation` | Listing details |
-| `check_availability` | Calendar + read-only price quote |
+| `get_accommodation_photos` | Photo gallery URLs |
+| `get_accommodation_reviews` | Guest reviews |
+| `check_availability` | Calendar + price quote (optional discount) |
+| `request_login_otp` / `verify_login_otp` | Guest OTP login → `access_token` |
+| `get_auth_status` / `logout` | Token check / revoke |
+| `create_booking` | Create reservation (`confirm=true`) |
+| `calculate_invoice` | Apply discount / credit |
+| `get_payment_link` | Shab pay URL (user pays in browser) |
+| `list_trips` / `get_booking` | User bookings |
+| `get_booking_host` / `get_host_profile` | Host contact / public profile |
 
-No booking, payment, or account mutation.
+Auth details: [docs/AUTH.md](docs/AUTH.md). Card/IPG entry is out of scope.
 
 ## Quick start (local)
 
@@ -43,10 +53,10 @@ MCP: `http://127.0.0.1:8000/mcp`
 ## Docker
 
 ```bash
-docker build -t shab-mcp:0.1.0 .
+docker build -t shab-mcp:0.2.0 .
 docker run --rm -p 8000:8000 \
   -e SHAB_API_BASE_URL=https://api.shab.ir \
-  shab-mcp:0.1.0
+  shab-mcp:0.2.0
 ```
 
 ## AI Lab Pro + LiteLLM

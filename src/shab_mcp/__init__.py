@@ -1,3 +1,3 @@
-"""Shab MCP — private read-only Model Context Protocol server for Shab APIs."""
+"""Shab MCP — Model Context Protocol server for Shab discovery and guest booking."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

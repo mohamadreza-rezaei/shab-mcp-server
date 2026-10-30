@@ -14,6 +14,7 @@ async def check_availability_impl(
     check_in: str,
     check_out: str,
     guests: int = 2,
+    discount_code: str | None = None,
 ) -> dict[str, Any]:
     if accommodation_id < 1:
         raise ShabValidationError("accommodation_id must be a positive integer.")
@@ -23,6 +24,7 @@ async def check_availability_impl(
     start, end = validate_stay_range(check_in, check_out)
     jalali_in = to_jalali_api(start, field="check_in")
     jalali_out = to_jalali_api(end, field="check_out")
+    code = (discount_code or "").strip() or None
 
     async with ShabAPIClient() as api:
         calendar_data = await api.get_house_calendar(
@@ -35,6 +37,7 @@ async def check_availability_impl(
             checkin=jalali_in,
             checkout=jalali_out,
             guests_count=guests,
+            discount_code=code,
         )
 
     nights = normalize_calendar(calendar_data or {})
@@ -49,10 +52,11 @@ async def check_availability_impl(
         "check_in_jalali": jalali_in,
         "check_out_jalali": jalali_out,
         "guests": guests,
+        "discount_code": code,
         "available": available,
         "unavailable_nights": unavailable,
         "nights": stay_nights,
-        "quote": normalize_proforma(quote or {}),
+        "quote": normalize_proforma(quote or {}, prefer_discount=bool(code)),
         "currency": "Toman",
     }
 
