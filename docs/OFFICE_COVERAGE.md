@@ -56,9 +56,9 @@ Status values: `planned` | `done` | `skip`.
 
 | Upstream | Tool | Status |
 |----------|------|--------|
-| `GET/POST review…` | `office_list_reviews` / `office_update_review` | planned |
-| `POST financial/edit-host-and-guest-records` | `office_edit_host_guest_financials` | planned |
-| `GET user/withdraw-requests` / review | `office_list_withdraw_requests` / `office_review_withdraw` | planned |
+| `GET/POST review…` | `office_list_reviews` / `office_update_review` | done |
+| `POST financial/edit-host-and-guest-records` | `office_edit_host_guest_financials` | done |
+| `GET user/withdraw-requests` / review | `office_list_withdraw_requests` / `office_review_withdraw` | done |
 
 ## Act-as-user (2.0)
 

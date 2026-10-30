@@ -133,6 +133,13 @@ from shab_mcp.tools.office_followups import (
     office_set_house_support_status_safe,
     office_update_checkin_followup_safe,
 )
+from shab_mcp.tools.office_hg import (
+    office_edit_host_guest_financials_safe,
+    office_list_reviews_safe,
+    office_list_withdraw_requests_safe,
+    office_review_withdraw_safe,
+    office_update_review_safe,
+)
 INSTRUCTIONS = """\
 Official private MCP for Shab (shab.ir), Iran's short-term rental marketplace.
 
@@ -1338,6 +1345,62 @@ async def office_generate_easy_login_link(
         user_id=user_id,
         agent_mobile=agent_mobile,
         confirm=confirm,
+    )
+
+
+@mcp.tool
+async def office_list_reviews(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+    q: Annotated[str | None, Field(description="Search query.")] = None,
+) -> dict[str, Any]:
+    """List reviews for moderation."""
+    return await office_list_reviews_safe(staff_token=staff_token, page=page, q=q)
+
+
+@mcp.tool
+async def office_update_review(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    review_id: Annotated[int, Field(description="Review id.", ge=1)],
+    payload: Annotated[dict[str, Any], Field(description="Review update body.")],
+) -> dict[str, Any]:
+    """Update a review (moderation)."""
+    return await office_update_review_safe(
+        staff_token=staff_token, review_id=review_id, payload=payload
+    )
+
+
+@mcp.tool
+async def office_edit_host_guest_financials(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    payload: Annotated[dict[str, Any], Field(description="Financial edit body.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Edit host and guest financial records."""
+    return await office_edit_host_guest_financials_safe(
+        staff_token=staff_token, payload=payload, confirm=confirm
+    )
+
+
+@mcp.tool
+async def office_list_withdraw_requests(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    page: Annotated[int, Field(description="Page.", ge=1)] = 1,
+) -> dict[str, Any]:
+    """List host withdraw requests."""
+    return await office_list_withdraw_requests_safe(staff_token=staff_token, page=page)
+
+
+@mcp.tool
+async def office_review_withdraw(
+    staff_token: Annotated[str, Field(description="Bearer token from office_login.")],
+    request_id: Annotated[int, Field(description="Withdraw request id.", ge=1)],
+    status: Annotated[str, Field(description="Review status, e.g. approved/rejected.")],
+    confirm: Annotated[bool, Field(description="Must be true.")] = False,
+) -> dict[str, Any]:
+    """Approve/reject a withdraw request."""
+    return await office_review_withdraw_safe(
+        staff_token=staff_token, request_id=request_id, status=status, confirm=confirm
     )
 
 
