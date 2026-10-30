@@ -13,6 +13,9 @@ Designed to run inside **AI Lab Pro** and be consumed through **LiteLLM’s MCP 
 | [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor, Claude Code, OpenClaw, Copilot, Hermes, OpenWebUI |
 | [docs/SANDBOX_COVERAGE_REPORT.md](docs/SANDBOX_COVERAGE_REPORT.md) | Full coverage report (188 routes, 64 tools, skips) |
 | [docs/TOOLS.md](docs/TOOLS.md) | All 64 tools — EN (tech) + FA (PM/ops) |
+| [docs/OFFICE_ROADMAP.md](docs/OFFICE_ROADMAP.md) | Office / staff MCP plan 1.1 → 2.0 |
+| [docs/OFFICE_COVERAGE_REPORT.md](docs/OFFICE_COVERAGE_REPORT.md) | Backoffice coverage + skip rationale |
+| [docs/OFFICE_TOOLS.md](docs/OFFICE_TOOLS.md) | Office tools — EN + FA |
 
 ## Tools (v1.0)
 

@@ -1,0 +1,103 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "shab-mcp-office-roadmap",
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "x": 280,
+      "y": 20,
+      "width": 520,
+      "height": 40,
+      "text": "Shab MCP — Office roadmap v1 to v2",
+      "fontSize": 28,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "guest",
+      "type": "rectangle",
+      "x": 70,
+      "y": 100,
+      "width": 400,
+      "height": 100,
+      "backgroundColor": "#a5d8ff",
+      "strokeColor": "#4a9eed"
+    },
+    {
+      "id": "office",
+      "type": "rectangle",
+      "x": 560,
+      "y": 100,
+      "width": 400,
+      "height": 100,
+      "backgroundColor": "#d0bfff",
+      "strokeColor": "#8b5cf6"
+    },
+    {
+      "id": "v11",
+      "type": "rectangle",
+      "x": 40,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "backgroundColor": "#fff3bf"
+    },
+    {
+      "id": "v12",
+      "type": "rectangle",
+      "x": 190,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "backgroundColor": "#fff3bf"
+    },
+    {
+      "id": "v13",
+      "type": "rectangle",
+      "x": 340,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "backgroundColor": "#b2f2bb"
+    },
+    {
+      "id": "v14",
+      "type": "rectangle",
+      "x": 490,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "backgroundColor": "#b2f2bb"
+    },
+    {
+      "id": "v15",
+      "type": "rectangle",
+      "x": 640,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "backgroundColor": "#b2f2bb"
+    },
+    {
+      "id": "v16",
+      "type": "rectangle",
+      "x": 790,
+      "y": 280,
+      "width": 120,
+      "height": 60,
+      "backgroundColor": "#b2f2bb"
+    },
+    {
+      "id": "v20",
+      "type": "rectangle",
+      "x": 400,
+      "y": 400,
+      "width": 220,
+      "height": 80,
+      "backgroundColor": "#ffd8a8"
+    }
+  ],
+  "appState": { "viewBackgroundColor": "#ffffff" },
+  "files": {}
+}

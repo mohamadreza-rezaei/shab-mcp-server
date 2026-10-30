@@ -27,6 +27,11 @@ Cursor / Claude / OpenClaw / OpenWebUI / …
 | [V1_COVERAGE.md](./V1_COVERAGE.md) | Compact sandbox vs MCP done/skip matrix |
 | [SANDBOX_COVERAGE_REPORT.md](./SANDBOX_COVERAGE_REPORT.md) | Detailed coverage report for mainweb + shab-api teammates |
 | [TOOLS.md](./TOOLS.md) | All 64 tools — English (engineers) + فارسی (PM/support) |
+| [OFFICE_ROADMAP.md](./OFFICE_ROADMAP.md) | Staff / Call Center Office plan 1.1 → 2.0 |
+| [OFFICE_COVERAGE.md](./OFFICE_COVERAGE.md) | Backoffice route → tool matrix |
+| [OFFICE_COVERAGE_REPORT.md](./OFFICE_COVERAGE_REPORT.md) | Office coverage report for admin + API teammates |
+| [OFFICE_TOOLS.md](./OFFICE_TOOLS.md) | Office tools — EN + FA |
+| [office-mindmap.excalidraw](./office-mindmap.excalidraw) | Office roadmap mind map |
 | [ساخت MCP سفارشی.md](./ساخت%20MCP%20سفارشی.md) | Design notes / architecture (Persian) |
 
 ## Quick cheatsheet
