@@ -24,10 +24,9 @@ Cursor / Claude / OpenClaw / OpenWebUI / …
 | [CLIENTS.md](./CLIENTS.md) | Add Shab MCP to Cursor, Claude Code, OpenClaw, VS Code Copilot, Hermes |
 | [AUTH.md](./AUTH.md) | OTP auth + access_token + payment handoff |
 | [ROADMAP.md](./ROADMAP.md) | Version plan 0.2 → 1.0 |
-| [V1_COVERAGE.md](./V1_COVERAGE.md) | Sandbox vs MCP coverage matrix |
-| [AUTH.md](./AUTH.md) | OTP auth + access_token + payment handoff |
-| [ROADMAP.md](./ROADMAP.md) | Version plan 0.2 → 1.0 |
-| [V1_COVERAGE.md](./V1_COVERAGE.md) | Sandbox vs MCP coverage matrix |
+| [V1_COVERAGE.md](./V1_COVERAGE.md) | Compact sandbox vs MCP done/skip matrix |
+| [SANDBOX_COVERAGE_REPORT.md](./SANDBOX_COVERAGE_REPORT.md) | Detailed coverage report for mainweb + shab-api teammates |
+| [TOOLS.md](./TOOLS.md) | All 64 tools — English (engineers) + فارسی (PM/support) |
 | [ساخت MCP سفارشی.md](./ساخت%20MCP%20سفارشی.md) | Design notes / architecture (Persian) |
 
 ## Quick cheatsheet
@@ -57,7 +56,7 @@ Cursor / Claude / OpenClaw / OpenWebUI / …
 x-litellm-api-key: Bearer sk-<virtual-key>
 ```
 
-**Tools (v0.2):** discovery (search/photos/reviews) · OTP auth · create_booking · invoice/discount · payment_url · trips/host
+**Tools (v1.0):** **64** tools — see [TOOLS.md](./TOOLS.md); coverage [SANDBOX_COVERAGE_REPORT.md](./SANDBOX_COVERAGE_REPORT.md)
 
 **Dates:** Gregorian `YYYY-MM-DD` in · Jalali / unix day out to Shab API · prices in **Toman**.
 
@@ -74,4 +73,4 @@ curl -sS "$LITELLM_URL/shab_mcp/mcp" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
-You should see the v0.2 Shab tools. Full steps → [SETUP.md](./SETUP.md).
+You should see the Shab MCP tools (64 in v1.0). Full steps → [SETUP.md](./SETUP.md).

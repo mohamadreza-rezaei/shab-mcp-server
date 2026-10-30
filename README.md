@@ -11,27 +11,14 @@ Designed to run inside **AI Lab Pro** and be consumed through **LiteLLM’s MCP 
 | [docs/README.md](docs/README.md) | Short cheatsheet (URLs, auth, layout) |
 | [docs/SETUP.md](docs/SETUP.md) | Server deploy, Lab Pro compose, LiteLLM MCP, testing |
 | [docs/CLIENTS.md](docs/CLIENTS.md) | Cursor, Claude Code, OpenClaw, Copilot, Hermes, OpenWebUI |
+| [docs/SANDBOX_COVERAGE_REPORT.md](docs/SANDBOX_COVERAGE_REPORT.md) | Full coverage report (188 routes, 64 tools, skips) |
+| [docs/TOOLS.md](docs/TOOLS.md) | All 64 tools — EN (tech) + FA (PM/ops) |
 
 ## Tools (v1.0)
 
-| Tool | Purpose |
-|------|---------|
-| `search_destinations` | Resolve Persian place names |
-| `list_search_filters` | Amenity/feature codes for search |
-| `search_accommodations` | Search listings (rooms, amenities, sort) |
-| `get_accommodation` | Listing details |
-| `get_accommodation_photos` | Photo gallery URLs |
-| `get_accommodation_reviews` | Guest reviews |
-| `check_availability` | Calendar + price quote (optional discount) |
-| `request_login_otp` / `verify_login_otp` | Guest OTP login → `access_token` |
-| `get_auth_status` / `logout` | Token check / revoke |
-| `create_booking` | Create reservation (`confirm=true`) |
-| `calculate_invoice` | Apply discount / credit |
-| `get_payment_link` | Shab pay URL (user pays in browser) |
-| `list_trips` / `get_booking` | User bookings |
-| `get_booking_host` / `get_host_profile` | Host contact / public profile |
+**64 tools** — guest discovery → booking → lifecycle → profile + host listing/ops/finance. Full bilingual catalog: [docs/TOOLS.md](docs/TOOLS.md). Coverage numbers and skip rationale: [docs/SANDBOX_COVERAGE_REPORT.md](docs/SANDBOX_COVERAGE_REPORT.md).
 
-Auth details: [docs/AUTH.md](docs/AUTH.md). Card/IPG entry is out of scope.
+Auth details: [docs/AUTH.md](docs/AUTH.md). Card/IPG entry is out of scope (`get_payment_link` → browser order-tracking only).
 
 ## Quick start (local)
 
